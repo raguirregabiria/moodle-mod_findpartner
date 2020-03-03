@@ -18,7 +18,7 @@
  * The main mod_findpartner configuration form.
  *
  * @package     mod_findpartner
- * @copyright   2020 Your Name <you@example.com>
+ * @copyright   2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -30,7 +30,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
  * Module instance settings form.
  *
  * @package    mod_findpartner
- * @copyright  2020 Your Name <you@example.com>
+ * @copyright  2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_findpartner_mod_form extends moodleform_mod {

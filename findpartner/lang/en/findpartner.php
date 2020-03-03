@@ -19,10 +19,17 @@
  *
  * @package     mod_findpartner
  * @category    string
- * @copyright   2020 Your Name <you@example.com>
+ * @copyright   2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'Find your partner';
+$string['modulename'] = 'Find your partner';
+$string['modulename_help'] = '<p>Lets participants create and select groups. Features: </p><ul><li>Participant can create groups, give them a description</li><li>Participants can ask to join groups</li></ul>';
+$string['modulename_link'] = 'mod/findpartner/view';
+$string['findpartnername'] = 'Find your partner';
+$string['findpartnersettings'] = 'Options';
+$string['findpartnerfieldset'] = 'Set fields';
+//$string[''] = '';

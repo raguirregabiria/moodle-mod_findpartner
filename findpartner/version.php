@@ -18,7 +18,7 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     mod_findpartner
- * @copyright   2020 Your Name <you@example.com>
+ * @copyright   2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_findpartner';
 $plugin->release = '0.1.0';
-$plugin->version = 2020030200;
+$plugin->version = 2020030300;
 $plugin->requires = 2019052000;
 $plugin->maturity = MATURITY_ALPHA;

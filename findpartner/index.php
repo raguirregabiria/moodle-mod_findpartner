@@ -18,7 +18,7 @@
  * Display information about all the mod_findpartner modules in the requested course.
  *
  * @package     mod_findpartner
- * @copyright   2020 Your Name <you@example.com>
+ * @copyright   2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

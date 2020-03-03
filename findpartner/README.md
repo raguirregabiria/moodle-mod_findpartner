@@ -6,7 +6,7 @@ TODO Provide more detailed description here.
 
 ## License ##
 
-2020 Your Name <you@example.com>
+2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
