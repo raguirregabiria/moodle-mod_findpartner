@@ -68,8 +68,12 @@ class mod_findpartner_mod_form extends moodleform_mod {
 
         // Adding the rest of mod_findpartner settings, spreading all them into this fieldset
         // ... or adding more fieldsets ('header' elements) if needed for better logic.
-        $mform->addElement('static', 'label1', 'findpartnersettings', get_string('findpartnersettings', 'mod_findpartner'));
-        $mform->addElement('header', 'findpartnerfieldset', get_string('findpartnerfieldset', 'mod_findpartner'));
+
+        //The following line is something useless (for now) it only puts "options"
+        //$mform->addElement('static', 'label1', 'findpartnersettings', get_string('findpartnersettings', 'mod_findpartner'));
+
+        //The following line is something useless (for now) it only puts the string of findpartnerfieldset 
+       // $mform->addElement('header', 'findpartnerfieldset', get_string('findpartnerfieldset', 'mod_findpartner'));
 
         // Add standard elements.
         $this->standard_coursemodule_elements();

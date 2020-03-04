@@ -32,4 +32,6 @@ $string['modulename_link'] = 'mod/findpartner/view';
 $string['findpartnername'] = 'Find your partner';
 $string['findpartnersettings'] = 'Options';
 $string['findpartnerfieldset'] = 'Set fields';
+$string['findpartnername_help'] = 'Put a name for the activity';
+
 //$string[''] = '';
