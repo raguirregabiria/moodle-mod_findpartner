@@ -21,11 +21,10 @@
  * @copyright   2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 
-// Course_module ID, or
+// Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
 
 // ... module instance id.

@@ -15,7 +15,7 @@
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field."/>
         <FIELD NAME="minmembers" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Minimum of members that a group can have"/>
         <FIELD NAME="maxmembers" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum of members that a group can have"/>
-        <FIELD NAME="dateclosusegroups" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Deadline for students to make groups. When the time comes, the groups get automatically fulfill"/>
+        <FIELD NAME="dateclosuregroups" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Deadline for students to make groups. When the time comes, the groups get automatically fulfill"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

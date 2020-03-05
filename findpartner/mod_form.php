@@ -65,18 +65,28 @@ class mod_findpartner_mod_form extends moodleform_mod {
         } else {
             $this->add_intro_editor();
         }
-        //Adding minmembers
+        // Adding minmembers.
         $mform->addElement('text', 'minmembers', get_string('minmembers', 'mod_findpartner'), array('size' => '4'));
+        $mform->setDefault('minmembers', 2);
         $mform->setType('minmembers', PARAM_INT);
+        // TODO Check that minmembers is at least 2 and maxmembers>=minmembers.
+
+        // Adding maxmembers.
+        $mform->addElement('text', 'maxmembers', get_string('maxmembers', 'mod_findpartner'), array('size' => '4'));
+        $mform->setDefault('maxmembers', 2);
+        $mform->setType('maxmembers', PARAM_INT);
+
+        // Adding dateclosuregroups.
+        $mform->addElement('date_time_selector', 'dateclosuregroups', get_string('dateclosuregroups', 'mod_findpartner'));
 
         // Adding the rest of mod_findpartner settings, spreading all them into this fieldset
         // ... or adding more fieldsets ('header' elements) if needed for better logic.
 
-        //The following line is something useless (for now) it only puts "options"
-        //$mform->addElement('static', 'label1', 'findpartnersettings', get_string('findpartnersettings', 'mod_findpartner'));
+        // The following line is something useless (for now) it only puts "options"
+        // $mform->addElement('static', 'label1', 'findpartnersettings', get_string('findpartnersettings', 'mod_findpartner'));
 
-        //The following line is something useless (for now) it only puts the string of findpartnerfieldset 
-       // $mform->addElement('header', 'findpartnerfieldset', get_string('findpartnerfieldset', 'mod_findpartner'));
+        // The following line is something useless (for now) it only puts the string of findpartnerfieldset.
+        // $mform->addElement('header', 'findpartnerfieldset', get_string('findpartnerfieldset', 'mod_findpartner'));
 
         // Add standard elements.
         $this->standard_coursemodule_elements();

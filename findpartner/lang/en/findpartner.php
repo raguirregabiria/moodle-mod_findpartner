@@ -34,5 +34,7 @@ $string['findpartnersettings'] = 'Options';
 $string['findpartnerfieldset'] = 'Set fields';
 $string['findpartnername_help'] = 'Put a name for the activity';
 $string['minmembers'] = 'Minimum of members per group';
+$string['maxmembers'] = 'Maximum of members per group';
+$string['dateclosuregroups'] = 'Date when students can\'t join groups anymore';
 
-//$string[''] = '';
+// $string[''] = '';
