@@ -65,6 +65,9 @@ class mod_findpartner_mod_form extends moodleform_mod {
         } else {
             $this->add_intro_editor();
         }
+        //Adding minmembers
+        $mform->addElement('text', 'minmembers', get_string('minmembers', 'mod_findpartner'), array('size' => '4'));
+        $mform->setType('minmembers', PARAM_INT);
 
         // Adding the rest of mod_findpartner settings, spreading all them into this fieldset
         // ... or adding more fieldsets ('header' elements) if needed for better logic.
