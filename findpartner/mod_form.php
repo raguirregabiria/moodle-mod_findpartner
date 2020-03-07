@@ -33,6 +33,7 @@ require_once($CFG->dirroot.'/course/moodleform_mod.php');
  * @copyright  2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 class mod_findpartner_mod_form extends moodleform_mod {
 
     /**
@@ -69,13 +70,14 @@ class mod_findpartner_mod_form extends moodleform_mod {
         $mform->addElement('text', 'minmembers', get_string('minmembers', 'mod_findpartner'), array('size' => '4'));
         $mform->setDefault('minmembers', 2);
         $mform->setType('minmembers', PARAM_INT);
-        // TODO Check that minmembers is at least 2 and maxmembers>=minmembers.
-
+        $mform->registerRule('minusOne', 'regex', '/^([2-9]|[1-9][0-9]+)$/');
+        $mform->addRule('minmembers', get_string('error_minmembers', 'mod_findpartner'), 'minusOne', null, 'client');
+        
         // Adding maxmembers.
         $mform->addElement('text', 'maxmembers', get_string('maxmembers', 'mod_findpartner'), array('size' => '4'));
         $mform->setDefault('maxmembers', 2);
         $mform->setType('maxmembers', PARAM_INT);
-
+        $mform->addRule(array('maxmembers','minmembers'),get_string('error_maxmembers', 'mod_findpartner'),'compare','>=','client');
         // Adding dateclosuregroups.
         $mform->addElement('date_time_selector', 'dateclosuregroups', get_string('dateclosuregroups', 'mod_findpartner'));
 
