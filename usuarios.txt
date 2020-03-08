@@ -2,3 +2,5 @@ Hari Seldom:
 usuario: seldom
 correo: hariseldom@fundacion.es
 contraseña: _tortillaAtun58
+
+Matricular usuarios: http://localhost/user/index.php?id=2
