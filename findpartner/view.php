@@ -44,7 +44,15 @@ if ($id) {
 
 require_login($course, true, $cm);
 
+
 $modulecontext = context_module::instance($cm->id);
+
+/*if (has_capability('mod/findpartner:update', $modulecontext)) {
+    echo "<h1>Vista profesor</h1>";
+    
+}else{
+    echo "<h1>Vista alumno</h1>";
+}
 
 $event = \mod_findpartner\event\course_module_viewed::create(array(
     'objectid' => $moduleinstance->id,
@@ -52,7 +60,9 @@ $event = \mod_findpartner\event\course_module_viewed::create(array(
 ));
 $event->add_record_snapshot('course', $course);
 $event->add_record_snapshot('findpartner', $moduleinstance);
-$event->trigger();
+$event->trigger();*/
+
+global $USER;
 
 $PAGE->set_url('/mod/findpartner/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -60,5 +70,10 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
-
+if (has_capability('mod/findpartner:update', $modulecontext)) {
+    echo "<center>Alguna chorrada con palomas $USER->id</center>";
+    
+}else{
+    echo "<center>Desarrollado por: Pedro P. Alarcón $USER->id </center>";
+}
 echo $OUTPUT->footer();
