@@ -63,6 +63,7 @@ $event->add_record_snapshot('findpartner', $moduleinstance);
 $event->trigger();*/
 
 global $USER;
+global $DB;
 
 $PAGE->set_url('/mod/findpartner/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -74,6 +75,12 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
     
 }else{
-    echo "<center>Desarrollado por: Pedro P. Alarcón $USER->id </center>";
+    echo "<center>Este es el id del usuario: $USER->id<br>Estee s el id de la actividad: $moduleinstance->id</center>";
+
+    $record = $DB->get_record('student', ['studentid' => $USER->id,'findpartnerid'=>$moduleinstance->id]);
+    if ($record==null){
+        $ins = (object)array('id'=>$USER->id,'studentgroup'=>null,'studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id);
+        $DB->insert_record('student', $ins, $returnid=true. $bulk=false);
+    }
 }
 echo $OUTPUT->footer();
