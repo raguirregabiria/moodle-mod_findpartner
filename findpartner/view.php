@@ -23,6 +23,7 @@
  */
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
+require_once('group_form.php');
 
 // Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
@@ -75,12 +76,31 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
     
 }else{
-    echo "<center>Este es el id del usuario: $USER->id<br>Estee s el id de la actividad: $moduleinstance->id</center>";
+    echo "<center>Este es el id del usuario: $USER->id<br>Este es el id de la actividad: $moduleinstance->id</center>";
 
     $record = $DB->get_record('student', ['studentid' => $USER->id,'findpartnerid'=>$moduleinstance->id]);
     if ($record==null){
         $ins = (object)array('id'=>$USER->id,'studentgroup'=>null,'studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id);
         $DB->insert_record('student', $ins, $returnid=true. $bulk=false);
     }
+    
+    //$mform->new group_form();
+    /*
+    if ($mform->is_cancelled()) {
+        //Handle form cancel operation, if cancel button is present on form
+    } else if ($fromform = $mform->get_data()) {
+      //In this case you process validated data. $mform->get_data() returns data posted in form.
+    } else {
+      // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
+      // or on the first display of the form.
+     
+      //Set default data (if any)
+    $mform->set_data($toform)
+    $mform->display()
+        */
+
+
+
+
 }
 echo $OUTPUT->footer();
