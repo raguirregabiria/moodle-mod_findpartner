@@ -83,6 +83,14 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         $ins = (object)array('id'=>$USER->id,'studentgroup'=>null,'studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id);
         $DB->insert_record('findpartner_student', $ins, $returnid=true. $bulk=false);
     }
+
+    echo '<table>';
+    $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner'=>$moduleinstance->id]);
+    foreach ($newrecords as $newrecord){
+        echo "<tr><td>$newrecord->name: </td><td>$newrecord->description</td></tr>";
+    }
+    echo '</table>';
+
     
     //$mform->new group_form();
     /*
