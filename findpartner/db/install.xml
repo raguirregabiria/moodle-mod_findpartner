@@ -22,7 +22,7 @@
         <KEY NAME="fk_course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="proyectgroup" COMMENT="This is the table of the group.">
+    <TABLE NAME="findpartner_projectgroup" COMMENT="This is the table of the group.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="findpartner" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="findpartner key"/>
@@ -35,7 +35,7 @@
         <KEY NAME="fk_findpartner" TYPE="foreign" FIELDS="findpartner" REFTABLE="findpartner" REFFIELDS="id" COMMENT="Key of the table findpartner."/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="student" COMMENT="This table contains all the students of the course and his/her group.">
+    <TABLE NAME="findpartner_student" COMMENT="This table contains all the students of the course and his/her group.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="studentgroup" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The student belongs to this group."/>
@@ -46,16 +46,16 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="request" COMMENT="A student send a request to a group to join.">
+    <TABLE NAME="findpartner_request" COMMENT="A student send a request to a group to join.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="student" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The student who wants to join the group."/>
-        <FIELD NAME="proyectgroup" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The group who is asked for the student to get in."/>
+        <FIELD NAME="j" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The group who is asked for the student to get in."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="fk_student" TYPE="foreign" FIELDS="student" REFTABLE="student" REFFIELDS="id"/>
-        <KEY NAME="fk_proyectgroup" TYPE="foreign" FIELDS="proyectgroup" REFTABLE="proyectgroup" REFFIELDS="id"/>
+        <KEY NAME="fk_student" TYPE="foreign" FIELDS="student" REFTABLE="findpartner_student" REFFIELDS="id"/>
+        <KEY NAME="fk_j" TYPE="foreign" FIELDS="j" REFTABLE="j" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>
