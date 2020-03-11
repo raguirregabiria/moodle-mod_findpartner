@@ -78,10 +78,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 }else{
     echo "<center>Este es el id del usuario: $USER->id<br>Este es el id de la actividad: $moduleinstance->id</center>";
 
-    $record = $DB->get_record('student', ['studentid' => $USER->id,'findpartnerid'=>$moduleinstance->id]);
+    $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id,'findpartnerid'=>$moduleinstance->id]);
     if ($record==null){
         $ins = (object)array('id'=>$USER->id,'studentgroup'=>null,'studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id);
-        $DB->insert_record('student', $ins, $returnid=true. $bulk=false);
+        $DB->insert_record('findpartner_student', $ins, $returnid=true. $bulk=false);
     }
     
     //$mform->new group_form();
