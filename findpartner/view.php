@@ -91,8 +91,35 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     }
     echo '</table>';
 
+
+
+
     
-    //$mform->new group_form();
+
+    
+        $groupselect = $DB->get_record( 'groupselect', array (
+                'id' => 1
+        ), '*', MUST_EXIST );
+        $cm = get_coursemodule_from_instance( 'groupselect', $groupselect->id, $groupselect->course, false, MUST_EXIST );
+    
+    require_once('select_form.php');
+    $grpname = format_string( $groups[$select]->name, true, array (
+        'context' => $context
+) );
+$usercount = isset( $counts[$select] ) ? $counts[$select]->usercount : 0;
+
+$data = array (
+        'id' => $id,
+        'select' => $select,
+        'group_password' => $password
+);
+$mform = new select_form( null, array (
+        $data,
+        $groupselect,
+        $grpname
+) );
+$mform->display();
+    //$mform->new group_form(1,2);
     /*
     if ($mform->is_cancelled()) {
         //Handle form cancel operation, if cancel button is present on form
