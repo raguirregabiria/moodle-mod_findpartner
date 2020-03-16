@@ -90,49 +90,30 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         echo "<tr><td>$newrecord->name: </td><td>$newrecord->description</td></tr>";
     }
     echo '</table>';
-
-
-
-
+    require_once('group_form.php');
     
+    $data = array (
+            'id' => $id,
+            'select' => $select
+    );
+    //Esto queremos tirarlo en el futuro
+    $groupselect = $DB->get_record( 'groupselect', array (
+        'id' => 1
+    ), '*', MUST_EXIST );
 
-    
-        $groupselect = $DB->get_record( 'groupselect', array (
-                'id' => 1
-        ), '*', MUST_EXIST );
-        $cm = get_coursemodule_from_instance( 'groupselect', $groupselect->id, $groupselect->course, false, MUST_EXIST );
-    
-    require_once('select_form.php');
-    $grpname = format_string( $groups[$select]->name, true, array (
-        'context' => $context
-) );
-$usercount = isset( $counts[$select] ) ? $counts[$select]->usercount : 0;
-
-$data = array (
-        'id' => $id,
-        'select' => $select,
-        'group_password' => $password
-);
-$mform = new select_form( null, array (
-        $data,
-        $groupselect,
-        $grpname
-) );
-$mform->display();
-    //$mform->new group_form(1,2);
-    /*
+    $mform = new group_form( null, array (
+            $data,
+            $groupselect
+    ) );
+    $mform->display();
     if ($mform->is_cancelled()) {
         //Handle form cancel operation, if cancel button is present on form
     } else if ($fromform = $mform->get_data()) {
-      //In this case you process validated data. $mform->get_data() returns data posted in form.
-    } else {
+      echo $fromform->groupname;
+    }
       // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
       // or on the first display of the form.
-     
-      //Set default data (if any)
-    $mform->set_data($toform)
-    $mform->display()
-        */
+    
 
 
 
