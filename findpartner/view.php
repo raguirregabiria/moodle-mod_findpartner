@@ -25,6 +25,11 @@ require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 require_once('group_form.php');
 
+// Para borrar
+
+
+
+
 // Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
 
@@ -97,19 +102,26 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             'select' => $select
     );
     //Esto queremos tirarlo en el futuro
-    $groupselect = $DB->get_record( 'groupselect', array (
+    $findpartner = $DB->get_record( 'findpartner', array (
         'id' => 1
     ), '*', MUST_EXIST );
 
     $mform = new group_form( null, array (
             $data,
-            $groupselect
+            $findpartner
     ) );
-    $mform->display();
-    if ($mform->is_cancelled()) {
-        //Handle form cancel operation, if cancel button is present on form
-    } else if ($fromform = $mform->get_data()) {
-      echo $fromform->groupname;
+
+    $newrecords = $DB->get_record('findpartner_student', ['studentid'=>$USER->id]);
+
+    if ($newrecords->studentgroup==null){   
+        //redirect(new moodle_url('/mod/findpartner/view.php'));
+
+        $mform->display();
+        if ($mform->is_cancelled()) {
+            //Handle form cancel operation, if cancel button is present on form
+        } else if ($fromform = $mform->get_data()) {
+        echo $fromform->groupname;
+        }
     }
       // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
       // or on the first display of the form.
