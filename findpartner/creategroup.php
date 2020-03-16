@@ -21,6 +21,8 @@
  * @copyright   2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 require_once('group_form.php');
@@ -50,64 +52,40 @@ require_login($course, true, $cm);
 
 $modulecontext = context_module::instance($cm->id);
 
-/*if (has_capability('mod/findpartner:update', $modulecontext)) {
-    echo "<h1>Vista profesor</h1>";
-    
-}else{
-    echo "<h1>Vista alumno</h1>";
-}
-
-$event = \mod_findpartner\event\course_module_viewed::create(array(
-    'objectid' => $moduleinstance->id,
-    'context' => $modulecontext
-));
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('findpartner', $moduleinstance);
-$event->trigger();*/
 
 global $USER;
 global $DB;
 
-$PAGE->set_url('/mod/findpartner/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/findpartner/creategroup.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
+
 echo $OUTPUT->header();
-if (has_capability('mod/findpartner:update', $modulecontext)) {
-    echo "<center>Alguna chorrada con palomas $USER->id</center>";
-    
-}else{
-    echo "<center>Este es el id del usuario: $USER->id<br>Este es el id de la actividad: $moduleinstance->id</center>";
 
-    $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id,'findpartnerid'=>$moduleinstance->id]);
-    if ($record==null){
-        $ins = (object)array('id'=>$USER->id,'studentgroup'=>null,'studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id);
-        $DB->insert_record('findpartner_student', $ins, $returnid=true. $bulk=false);
-    }
+$data = array (
+    'id' => $id,
+    'select' => $select
+);
+//Esto queremos tirarlo en el futuro
+$findpartner = $DB->get_record( 'findpartner', array (
+'id' => 1
+), '*', MUST_EXIST );
 
-    echo '<table>';
-    $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner'=>$moduleinstance->id]);
-    foreach ($newrecords as $newrecord){
-        echo "<tr><td>$newrecord->name: </td><td>$newrecord->description</td></tr>";
-    }
-    echo '</table>';
-   
+$mform = new group_form( null, array (
+    $data,
+    $findpartner
+) );
 
-    $newrecords = $DB->get_record('findpartner_student', ['studentid'=>$USER->id]);
+$mform->display();
 
-    if ($newrecords->studentgroup==null){   
-
-        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php', array('id' => $cm->id)), get_string('creategroup', 'mod_groupselect'));
-        
-
-    }
-      // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
-      // or on the first display of the form.
-    
-
-
-
-
+if ($mform->is_cancelled()) {
+    //Handle form cancel operation, if cancel button is present on form
+    redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
+} else if ($fromform = $mform->get_data()) {
+echo $fromform->groupname;
 }
+
+
 echo $OUTPUT->footer();
