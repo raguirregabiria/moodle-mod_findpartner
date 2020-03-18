@@ -27,15 +27,15 @@ class group_form extends moodleform {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-            
+        
         $mform->addElement('text', 'groupname', get_string('group_name', 'mod_findpartner'), array('size' => '100', 'maxlength' => self::GROUP_NAME_MAXLEN - 1));
         $mform->setType('groupname', PARAM_TEXT);
-
+        $mform->addRule('groupname', null, 'required', null, 'client');
         $mform->addElement('textarea', 'description', get_string('group_description', 'mod_findpartner'),
                 array('wrap' => 'virtual', 'maxlength' => self::DESCRIPTION_MAXLEN - 1, 'rows' => '3', 'cols' => '102', ''));
         
         $mform->setType('description', PARAM_NOTAGS);
-          
+        $mform->addRule('description', null, 'required', null, 'client');
         $this->add_action_buttons(true, get_string('creategroup', 'mod_findpartner'));
         $this->set_data($data);
 

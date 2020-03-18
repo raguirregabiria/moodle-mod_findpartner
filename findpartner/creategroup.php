@@ -84,7 +84,19 @@ if ($mform->is_cancelled()) {
     //Handle form cancel operation, if cancel button is present on form
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
-echo $fromform->groupname;
+    $ins = (object)array('findpartner'=>$moduleinstance->id,'description'=>$fromform->description,'name'=>$fromform->groupname, 'groupadmin'=>$USER->id);
+    $DB->insert_record('findpartner_projectgroup', $ins, $returnid=true. $bulk=false);
+    
+    
+    $groupid=$DB->get_record('findpartner_projectgroup', array('groupadmin'=>$USER->id,'findpartner'=>$moduleinstance->id));
+
+    $update_record = $DB->get_record('findpartner_student',  array('studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id));
+
+    $update_record->studentgroup=$groupid->id;
+
+    $DB->update_record('findpartner_student',$update_record);
+
+    redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 
 

@@ -50,21 +50,6 @@ require_login($course, true, $cm);
 
 $modulecontext = context_module::instance($cm->id);
 
-/*if (has_capability('mod/findpartner:update', $modulecontext)) {
-    echo "<h1>Vista profesor</h1>";
-    
-}else{
-    echo "<h1>Vista alumno</h1>";
-}
-
-$event = \mod_findpartner\event\course_module_viewed::create(array(
-    'objectid' => $moduleinstance->id,
-    'context' => $modulecontext
-));
-$event->add_record_snapshot('course', $course);
-$event->add_record_snapshot('findpartner', $moduleinstance);
-$event->trigger();*/
-
 global $USER;
 global $DB;
 
@@ -91,23 +76,15 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     foreach ($newrecords as $newrecord){
         echo "<tr><td>$newrecord->name: </td><td>$newrecord->description</td></tr>";
     }
-    echo '</table>';
-   
+    echo '</table>'; 
 
-    $newrecords = $DB->get_record('findpartner_student', ['studentid'=>$USER->id]);
+    $newrecords = $DB->get_record('findpartner_student', array('studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id));
 
-    if ($newrecords->studentgroup==null){   
-
-        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php', array('id' => $cm->id)), get_string('creategroup', 'mod_groupselect'));
-        
+    if ($newrecords->studentgroup==null){
+        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php', array('id' => $cm->id)), get_string('creategroup', 'mod_groupselect'));    
 
     }
       // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
       // or on the first display of the form.
-    
-
-
-
-
-}
+    }
 echo $OUTPUT->footer();
