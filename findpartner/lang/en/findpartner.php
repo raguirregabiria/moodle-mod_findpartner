@@ -42,8 +42,9 @@ $string['group_name'] = 'Name of the group';
 $string['group_description'] = 'Description of the group. Please make it good.';
 $string['creategroup'] = 'Create the group';
 $string['maxcharlenreached'] = 'Maximum lenght of the string reached';
+$string['description'] = 'Description';
+$string['members'] = 'Members';
+$string[''] = '';
 $string[''] = '';
 $string[''] = '';
 
-
-// $string[''] = '';

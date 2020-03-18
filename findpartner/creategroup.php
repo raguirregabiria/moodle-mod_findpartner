@@ -68,7 +68,7 @@ $data = array (
     'id' => $id,
     'select' => $select
 );
-//Esto queremos tirarlo en el futuro
+    // Esto queremos tirarlo en el futuro.
 $findpartner = $DB->get_record( 'findpartner', array (
 'id' => 1
 ), '*', MUST_EXIST );
@@ -81,20 +81,21 @@ $mform = new group_form( null, array (
 $mform->display();
 
 if ($mform->is_cancelled()) {
-    //Handle form cancel operation, if cancel button is present on form
+    // Handle form cancel operation, if cancel button is present on form.
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
-    $ins = (object)array('findpartner'=>$moduleinstance->id,'description'=>$fromform->description,'name'=>$fromform->groupname, 'groupadmin'=>$USER->id);
-    $DB->insert_record('findpartner_projectgroup', $ins, $returnid=true. $bulk=false);
-    
-    
-    $groupid=$DB->get_record('findpartner_projectgroup', array('groupadmin'=>$USER->id,'findpartner'=>$moduleinstance->id));
+    $ins = (object)array('findpartner' => $moduleinstance->id, 'description' => $fromform->description,
+        'name' => $fromform->groupname, 'groupadmin' => $USER->id);
 
-    $update_record = $DB->get_record('findpartner_student',  array('studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id));
+    $DB->insert_record('findpartner_projectgroup', $ins, $returnid = true. $bulk = false);
+    $groupid = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
 
-    $update_record->studentgroup=$groupid->id;
+    $updaterecord = $DB->get_record('findpartner_student',
+        array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
 
-    $DB->update_record('findpartner_student',$update_record);
+    $updaterecord->studentgroup = $groupid->id;
+
+    $DB->update_record('findpartner_student', $updaterecord);
 
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }

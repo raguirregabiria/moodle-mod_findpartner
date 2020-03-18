@@ -58,33 +58,57 @@ $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
+// Header of the page.
+
+
+
 echo $OUTPUT->header();
 if (has_capability('mod/findpartner:update', $modulecontext)) {
+
+    // Teacher view.
+
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
-    
-}else{
+} else {
+
+    // Student view.
+
     echo "<center>Este es el id del usuario: $USER->id<br>Este es el id de la actividad: $moduleinstance->id</center>";
 
-    $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id,'findpartnerid'=>$moduleinstance->id]);
-    if ($record==null){
-        $ins = (object)array('id'=>$USER->id,'studentgroup'=>null,'studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id);
-        $DB->insert_record('findpartner_student', $ins, $returnid=true. $bulk=false);
+    $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id]);
+    if ($record == null) {
+        $ins = (object)array('id' => $USER->id, 'studentgroup' => null, 'studentid' => $USER->id,
+            'findpartnerid' => $moduleinstance->id);
+        $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
     }
 
-    echo '<table>';
-    $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner'=>$moduleinstance->id]);
-    foreach ($newrecords as $newrecord){
-        echo "<tr><td>$newrecord->name: </td><td>$newrecord->description</td></tr>";
-    }
-    echo '</table>'; 
+    echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
+        get_string('description', 'mod_findpartner').'</td><td>'.
+        get_string('members', 'mod_findpartner').'</td></tr>';
 
-    $newrecords = $DB->get_record('findpartner_student', array('studentid'=>$USER->id,'findpartnerid'=>$moduleinstance->id));
+    $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
+    foreach ($newrecords as $newrecord) {
+        $maxmembers = $DB->get_record('findpartner', ['id' => $newrecord->findpartner]);
+        $nummembers = $DB->count_records('findpartner_student', array('studentgroup' => $newrecord->id));
+        echo "<tr><td>".$newrecord->name.": </td>";
+        echo "<td>$newrecord->description</td><td>";
+        echo $nummembers."/".$maxmembers->maxmembers ."</td>";
 
-    if ($newrecords->studentgroup==null){
-        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php', array('id' => $cm->id)), get_string('creategroup', 'mod_groupselect'));    
+        // This will be changed.
+
+        if ($nummembers < $maxmembers->maxmembers) {
+            echo "<td>Puedes mandar peticion</td>";
+        }
+        echo "</tr>";
 
     }
-      // this branch is executed if the form is submitted but the data doesn't validate and the form should be redisplayed
-      // or on the first display of the form.
+
+    echo '</table>';
+
+    $newrecords = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+
+    if ($newrecords->studentgroup == null) {
+        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php',
+            array('id' => $cm->id)), get_string('creategroup', 'mod_fndpartner'));
     }
+}
 echo $OUTPUT->footer();
