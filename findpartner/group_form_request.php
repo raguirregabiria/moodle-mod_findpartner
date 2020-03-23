@@ -46,6 +46,9 @@ class group_form_request extends moodleform {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+        // This is necessary to save the groupid in makerequest
+        $mform->addElement('hidden', 'groupid');
+        $mform->setType('groupid', PARAM_INT);
         
         
         

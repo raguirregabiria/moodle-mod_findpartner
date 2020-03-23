@@ -36,7 +36,7 @@ $id = optional_param('id', 0, PARAM_INT);
 // ... module instance id.
 $f  = optional_param('f', 0, PARAM_INT);
 
-
+// Groupid.
 $groupid = optional_param('groupid', 0, PARAM_INT);
 
 
@@ -83,24 +83,19 @@ $mform = new group_form_request( null, array (
     $data,
     $findpartner
 ) );
-$_SESSION['granunja'] = $groupid;
-echo "Hola, yo qué sé, tal" . $groupid;
-echo "Hola, yo qué sé, tal" . $id;
 
 $mform->display();
-//echo "Hola, yo qué sé, tal" . $groupid;
+
 if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is present on form.
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
 
-    $ins = (object)array('student' => $USER->id, 'groupid' => $groupid, 'message' => $fromform->request);
+    $ins = (object)array('student' => $USER->id, 'groupid' => $fromform->groupid, 'message' => $fromform->request);
 
     $DB->insert_record('findpartner_request', $ins, $returnid = true. $bulk = false);
 
-    //redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
-    echo "Hola, yo qué sé, tal " . $groupid;
-    echo " Otra cosa " . $id;
+    redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 
 
