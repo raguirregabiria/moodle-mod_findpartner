@@ -25,7 +25,7 @@ require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 require_once('group_form.php');
 
-
+require_once('group_form_request.php');
 
 // Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
@@ -97,9 +97,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
         if ($nummembers < $maxmembers->maxmembers) {
             echo "<td>Puedes mandar peticion</td>";
+            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makerequest.php',
+                array('id' => $cm->id, 'groupid' => $newrecord->id)), get_string('send_request', 'mod_findpartner')) . "</td>";
         }
         echo "</tr>";
-
     }
 
     echo '</table>';
@@ -108,7 +109,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     if ($newrecords->studentgroup == null) {
         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php',
-            array('id' => $cm->id)), get_string('creategroup', 'mod_fndpartner'));
+            array('id' => $cm->id)), get_string('creategroup', 'mod_findpartner'));
     }
 }
 echo $OUTPUT->footer();
