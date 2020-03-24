@@ -48,6 +48,12 @@ $string['request'] = 'Message of the request';
 $string['send'] = 'Send message';
 $string['send_request'] = 'Send a request';
 $string['inagroup'] = 'You are already in a group. You can\'t create a group.';
+$string['viewrequest'] = 'View request';
+$string['rmsg'] = 'Request message';
+$string['accept'] = 'Accept';
+$string['deny'] = 'Deny';
+$string[''] = '';
+$string[''] = '';
 $string[''] = '';
 $string[''] = '';
 

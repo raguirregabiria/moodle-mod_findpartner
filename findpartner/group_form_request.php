@@ -45,18 +45,21 @@ class group_form_request extends moodleform {
         list($data) = $this->_customdata;
 
         $mform->addElement('hidden', 'id');
+
         $mform->setType('id', PARAM_INT);
-        // This is necessary to save the groupid in makerequest
+        // This is necessary to save the groupid in makerequest.
         $mform->addElement('hidden', 'groupid');
+
         $mform->setType('groupid', PARAM_INT);
-        
-        
-        
         $mform->addElement('textarea', 'request', get_string('request', 'mod_findpartner'),
                 array('wrap' => 'virtual', 'maxlength' => self::REQUEST_MAXLEN - 1, 'rows' => '3', 'cols' => '102', ''));
+
         $mform->setType('request', PARAM_NOTAGS);
+
         $mform->addRule('request', null, 'required', null, 'client');
+
         $this->add_action_buttons(true, get_string('send', 'mod_findpartner'));
+
         $this->set_data($data);
 
     }
