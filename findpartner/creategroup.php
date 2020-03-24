@@ -26,6 +26,7 @@
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 require_once('group_form.php');
+require_once('locallib.php');
 
 
 
@@ -84,18 +85,31 @@ if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is present on form.
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
-    $ins = (object)array('findpartner' => $moduleinstance->id, 'description' => $fromform->description,
-        'name' => $fromform->groupname, 'groupadmin' => $USER->id);
 
-    $DB->insert_record('findpartner_projectgroup', $ins, $returnid = true. $bulk = false);
-    $groupid = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
+    // Control that a student doesn't open two tabs and create two groups.
 
-    $updaterecord = $DB->get_record('findpartner_student',
-        array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+    $inagroup = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+    if($inagroup->studentgroup == null) {
+        $ins = (object)array('findpartner' => $moduleinstance->id, 'description' => $fromform->description,
+            'name' => $fromform->groupname, 'groupadmin' => $USER->id);
 
-    $updaterecord->studentgroup = $groupid->id;
+        $DB->insert_record('findpartner_projectgroup', $ins, $returnid = true. $bulk = false);
+        $groupid = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
 
-    $DB->update_record('findpartner_student', $updaterecord);
+        $updaterecord = $DB->get_record('findpartner_student',
+            array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+
+        $updaterecord->studentgroup = $groupid->id;
+
+        $DB->update_record('findpartner_student', $updaterecord);
+    } else {
+
+        // This will be fixed, right now we don't know how to call getstring and make the function work.
+        
+        alertMessage('You are already in a group. You can\'t join another');
+    }
+
+
 
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }

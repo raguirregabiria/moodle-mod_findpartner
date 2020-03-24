@@ -47,7 +47,7 @@ $string['members'] = 'Members';
 $string['request'] = 'Message of the request';
 $string['send'] = 'Send message';
 $string['send_request'] = 'Send a request';
-$string[''] = '';
+$string['inagroup'] = 'You are already in a group. You can\'t create a group.';
 $string[''] = '';
 $string[''] = '';
 

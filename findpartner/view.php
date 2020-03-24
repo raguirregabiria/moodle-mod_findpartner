@@ -24,7 +24,7 @@
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 require_once('group_form.php');
-
+require_once('locallib.php');
 require_once('group_form_request.php');
 
 // Course_module ID, or.
@@ -68,6 +68,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     // Teacher view.
 
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
+    
 } else {
 
     // Student view.
