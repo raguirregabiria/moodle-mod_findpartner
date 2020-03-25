@@ -121,7 +121,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     if ($admin != null) {
 
         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id)), get_string('viewrequest', 'mod_findpartner'));
+            array('id' => $cm->id, 'requestid' => -1)), get_string('viewrequest', 'mod_findpartner'));
     }
 
     // If a student has no group, can create one.

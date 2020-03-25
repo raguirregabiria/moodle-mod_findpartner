@@ -35,6 +35,9 @@ $id = optional_param('id', 0, PARAM_INT);
 // ... module instance id.
 $f  = optional_param('f', 0, PARAM_INT);
 
+$requestid  = optional_param('requestid', 0, PARAM_INT);
+
+
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
     $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -68,19 +71,34 @@ $project = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $US
 
 $requests = $DB->get_records('findpartner_request', array('groupid' => $project->id));
 
+$fila = 1;
+
 if ($requests != null) {
     echo '<table>';
-    echo "<tr><td>". get_string('rmsg', 'mod_findpartner') .
+    echo "<tr><td>". get_string('requestmessage', 'mod_findpartner') .
     "</td><td>". get_string('accept', 'mod_findpartner') .
     "</td><td>". get_string('deny', 'mod_findpartner') ."</td></tr>";
     foreach ($requests as $request) {
 
         echo "<tr><td>" . $request->message . "</td>";
-
+        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
+            array('id' => $cm->id, 'requestid' => $request->id)), get_string('accept', 'mod_findpartner')) . "</td>";
+        // echo '<td><form type="POST"><input type="hidden" name=' . (string)$fila . 'value=' . (string)$request->id . '><input type="submit" 
+        //     name="submit_deny" value=' . get_string('deny', 'mod_findpartner') . '></form>' . "</td>";
 
 
         echo '</tr>';
+        $fila = $fila + 1;
     }
+
+
+    // This is used to know if somebody has pressed "accept".
+    if ($requestid>0) {
+        echo $requestid;
+    } else {
+        echo "adiós";
+    }
+
 }
 echo '</table>';
 
