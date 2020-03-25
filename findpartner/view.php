@@ -119,9 +119,12 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     // If a student is admin of a group.
 
     if ($admin != null) {
-
-        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id, 'requestid' => -1)), get_string('viewrequest', 'mod_findpartner'));
+        // If there are pending requests the button is showed.
+        $request = $DB->get_record('findpartner_request', array('groupid' => $admin->id, 'status' => 'P'));
+        if ($request != null){
+            echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
+                array('id' => $cm->id, 'requestid' => -1)), get_string('viewrequest', 'mod_findpartner'));
+        }
     }
 
     // If a student has no group, can create one.

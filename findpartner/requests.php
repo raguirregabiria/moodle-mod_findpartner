@@ -35,7 +35,11 @@ $id = optional_param('id', 0, PARAM_INT);
 // ... module instance id.
 $f  = optional_param('f', 0, PARAM_INT);
 
+// Id of the request that is accepted or denied.
 $requestid  = optional_param('requestid', 0, PARAM_INT);
+
+// Identifier of the button type (accept or deny). Accept = 1|Deny = 0.
+$buttonvalue  = optional_param('buttonvalue', 0, PARAM_INT);
 
 
 if ($id) {
@@ -69,9 +73,29 @@ echo $OUTPUT->header();
 
 $project = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
 
-$requests = $DB->get_records('findpartner_request', array('groupid' => $project->id));
+$requests = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
 
-$fila = 1;
+    // This is used to know if somebody has pressed a button.
+if ($requestid>0) {
+    $updaterecord = $DB->get_record('findpartner_request', array('id' => $requestid));
+    if ($buttonvalue == 1) {            
+        $updaterecord->status = 'A';  
+        $ins = $DB->get_record('findpartner_student', array('studentid' => $updaterecord->student, 
+            'findpartnerid' => $moduleinstance->id));
+        $ins->studentgroup = $updaterecord->groupid;
+        $DB->update_record('findpartner_student', $ins);
+       
+
+    } else {
+        $updaterecord->status = 'D';
+    }
+        
+    $DB->update_record('findpartner_request', $updaterecord);
+    redirect(new moodle_url('/mod/findpartner/requests.php',
+       array('id' => $cm->id, 'requestid' => -1)));
+} else {
+    echo "adiós";
+}
 
 if ($requests != null) {
     echo '<table>';
@@ -82,23 +106,14 @@ if ($requests != null) {
 
         echo "<tr><td>" . $request->message . "</td>";
         echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id, 'requestid' => $request->id)), get_string('accept', 'mod_findpartner')) . "</td>";
-        // echo '<td><form type="POST"><input type="hidden" name=' . (string)$fila . 'value=' . (string)$request->id . '><input type="submit" 
-        //     name="submit_deny" value=' . get_string('deny', 'mod_findpartner') . '></form>' . "</td>";
+            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 1)), get_string('accept', 'mod_findpartner')) . "</td>";
 
+        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
+            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 0)), get_string('deny', 'mod_findpartner')) . "</td>";
 
         echo '</tr>';
-        $fila = $fila + 1;
+
     }
-
-
-    // This is used to know if somebody has pressed "accept".
-    if ($requestid>0) {
-        echo $requestid;
-    } else {
-        echo "adiós";
-    }
-
 }
 echo '</table>';
 
