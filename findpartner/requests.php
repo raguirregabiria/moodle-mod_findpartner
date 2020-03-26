@@ -75,43 +75,38 @@ $project = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $US
 
 // This is used to know if somebody has pressed a button of accept or deny.
 
-if ($requestid>0) {
+if ($requestid > 0) {
     $updaterecord = $DB->get_record('findpartner_request', array('id' => $requestid));
-    if ($buttonvalue == 1) {            
+    if ($buttonvalue == 1) {
         $updaterecord->status = 'A';
 
         // If a student is accepted, the groupid has to be updated in the student table.
 
-        $ins = $DB->get_record('findpartner_student', array('studentid' => $updaterecord->student, 
+        $ins = $DB->get_record('findpartner_student', array('studentid' => $updaterecord->student,
             'findpartnerid' => $moduleinstance->id));
         $ins->studentgroup = $updaterecord->groupid;
         $DB->update_record('findpartner_student', $ins);
 
         // If a student is accepted in one group, all his request mush be denied.
 
-        $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->student, 
+        $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->student,
             'status' => 'P'));
         foreach ($ins as $row) {
-            
             $group = $DB->get_record('findpartner_projectgroup', array('id' => $row->groupid));
             if ($group->findpartner == $moduleinstance->id) {
                 $row->status = "D";
                 $DB->update_record('findpartner_request', $row);
 
-            }     
+            }
         }
-
-       
-
     } else {
         $updaterecord->status = 'D';
     }
-        
     $DB->update_record('findpartner_request', $updaterecord);
 
     $morerequestsleft = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
 
-    if ($morerequestsleft == null){
+    if ($morerequestsleft == null) {
 
         // If the are no more requests, you go to view.php.
 
@@ -125,8 +120,6 @@ if ($requestid>0) {
         redirect(new moodle_url('/mod/findpartner/requests.php',
             array('id' => $cm->id, 'requestid' => -1)));
     }
-
-    
 }
 
 // Show the requests.
@@ -142,10 +135,12 @@ if ($requests != null) {
 
         echo "<tr><td>" . $request->message . "</td>";
         echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 1)), get_string('accept', 'mod_findpartner')) . "</td>";
+            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 1)),
+                get_string('accept', 'mod_findpartner')) . "</td>";
 
         echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 0)), get_string('deny', 'mod_findpartner')) . "</td>";
+            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 0)),
+                get_string('deny', 'mod_findpartner')) . "</td>";
 
         echo '</tr>';
 

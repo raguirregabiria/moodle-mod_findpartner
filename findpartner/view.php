@@ -109,17 +109,24 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
         echo $nummembers . "/" . $maxmembers->maxmembers . "</td>";
 
+        // If there is enough space in the group.
+        if ($nummembers < $maxmembers->maxmembers) {
 
-        // This looks if the student has already made a request for the group.
+            // If the student has no group.
 
-        $requestmade = $DB->count_records('findpartner_request', array('student' => $student->studentid, 'groupid' => $newrecord->id, 'status' => 'P'));
+            if ($student->studentgroup == null) {
 
+                // If the student hasn't got more request pending for this group.
 
-        // This makes the button of send request if the student has no group and the group is not full and doesn't already request the group.
-
-        if (($nummembers < $maxmembers->maxmembers) && $student->studentgroup == null && $requestmade == 0) {
-            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makerequest.php',
-                array('id' => $cm->id, 'groupid' => $newrecord->id)), get_string('send_request', 'mod_findpartner')) . "</td>";
+                $requestmade = $DB->count_records('findpartner_request', array('student' => $student->studentid,
+                    'groupid' => $newrecord->id, 'status' => 'P'));
+                if ($requestmade == 0) {
+                    // The student can make a request to the group.
+                    echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makerequest.php',
+                        array('id' => $cm->id, 'groupid' => $newrecord->id)),
+                            get_string('send_request', 'mod_findpartner')) . "</td>";
+                }
+            }
         }
         echo "</tr>";
     }
@@ -133,7 +140,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     if ($admin != null) {
         // If there are pending requests the button is showed.
         $request = $DB->get_record('findpartner_request', array('groupid' => $admin->id, 'status' => 'P'));
-        if ($request != null){
+        if ($request != null) {
             echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
                 array('id' => $cm->id, 'requestid' => -1)), get_string('viewrequest', 'mod_findpartner'));
         }

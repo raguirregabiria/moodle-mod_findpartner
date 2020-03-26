@@ -35,4 +35,3 @@ require_once("$CFG->dirroot/mod/findpartner/lib.php");
 function alertmessage($msg) {
     echo "<script type='text/javascript'>alert('$msg');</script>";
 }
-

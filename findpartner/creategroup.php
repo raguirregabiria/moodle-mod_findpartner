@@ -90,6 +90,9 @@ if ($mform->is_cancelled()) {
 
     $inagroup = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
     if ($inagroup->studentgroup == null) {
+
+        // Create a new row in the table projectgroup.
+
         $ins = (object)array('findpartner' => $moduleinstance->id, 'description' => $fromform->description,
             'name' => $fromform->groupname, 'groupadmin' => $USER->id);
 
@@ -97,12 +100,29 @@ if ($mform->is_cancelled()) {
         $groupid = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id,
             'findpartner' => $moduleinstance->id));
 
+        // Get the record of the studentn in this activity.
         $updaterecord = $DB->get_record('findpartner_student',
             array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+
+        // Update the group of the student.
 
         $updaterecord->studentgroup = $groupid->id;
 
         $DB->update_record('findpartner_student', $updaterecord);
+
+        // Deny all the request that the student has made.
+
+        $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->studentid,
+            'status' => 'P'));
+        foreach ($ins as $row) {
+            $group = $DB->get_record('findpartner_projectgroup', array('id' => $groupid->id));
+            if ($group->findpartner == $moduleinstance->id) {
+                $row->status = "D";
+                $DB->update_record('findpartner_request', $row);
+
+            }
+        }
+
     } else {
         // This will be fixed, right now we don't know how to call getstring and make the function work.
         alertmessage('You are already in a group. You can\'t join another');
