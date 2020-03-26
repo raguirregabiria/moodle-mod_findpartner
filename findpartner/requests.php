@@ -73,17 +73,34 @@ echo $OUTPUT->header();
 
 $project = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
 
-$requests = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
+// This is used to know if somebody has pressed a button of accept or deny.
 
-    // This is used to know if somebody has pressed a button.
 if ($requestid>0) {
     $updaterecord = $DB->get_record('findpartner_request', array('id' => $requestid));
     if ($buttonvalue == 1) {            
-        $updaterecord->status = 'A';  
+        $updaterecord->status = 'A';
+
+        // If a student is accepted, the groupid has to be updated in the student table.
+
         $ins = $DB->get_record('findpartner_student', array('studentid' => $updaterecord->student, 
             'findpartnerid' => $moduleinstance->id));
         $ins->studentgroup = $updaterecord->groupid;
         $DB->update_record('findpartner_student', $ins);
+
+        // If a student is accepted in one group, all his request mush be denied.
+
+        $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->student, 
+            'status' => 'P'));
+        foreach ($ins as $row) {
+            
+            $group = $DB->get_record('findpartner_projectgroup', array('id' => $row->groupid));
+            if ($group->findpartner == $moduleinstance->id) {
+                $row->status = "D";
+                $DB->update_record('findpartner_request', $row);
+
+            }     
+        }
+
        
 
     } else {
@@ -91,11 +108,30 @@ if ($requestid>0) {
     }
         
     $DB->update_record('findpartner_request', $updaterecord);
-    redirect(new moodle_url('/mod/findpartner/requests.php',
-       array('id' => $cm->id, 'requestid' => -1)));
-} else {
-    echo "adiós";
+
+    $morerequestsleft = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
+
+    if ($morerequestsleft == null){
+
+        // If the are no more requests, you go to view.php.
+
+        redirect(new moodle_url('/mod/findpartner/view.php',
+            array('id' => $cm->id)));
+    } else {
+
+        // If there are more, you stay in the request page.
+        // But it has to be refreshed so the accepted or denied request doesn't appear.
+
+        redirect(new moodle_url('/mod/findpartner/requests.php',
+            array('id' => $cm->id, 'requestid' => -1)));
+    }
+
+    
 }
+
+// Show the requests.
+
+$requests = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
 
 if ($requests != null) {
     echo '<table>';
