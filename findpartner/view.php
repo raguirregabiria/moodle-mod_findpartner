@@ -75,12 +75,17 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     echo "<center>Este es el id del usuario: $USER->id<br>Este es el id de la actividad: $moduleinstance->id</center>";
 
+    // If the student hasn't enter in the activity create a row for the student in this activity.
+    // TODO ask the student if he/she wants to use findpartner.
+
     $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id]);
     if ($record == null) {
         $ins = (object)array('id' => $USER->id, 'studentgroup' => null, 'studentid' => $USER->id,
             'findpartnerid' => $moduleinstance->id);
         $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
     }
+
+    // This prints the table with the groups.
 
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner').'</td><td>'.
@@ -104,8 +109,15 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
         echo $nummembers . "/" . $maxmembers->maxmembers . "</td>";
 
-        // This makes the button of send request if the student has no group and the group is not full.
-        if (($nummembers < $maxmembers->maxmembers) && $student->studentgroup == null) {
+
+        // This looks if the student has already made a request for the group.
+
+        $requestmade = $DB->count_records('findpartner_request', array('student' => $student->studentid, 'groupid' => $newrecord->id, 'status' => 'P'));
+
+
+        // This makes the button of send request if the student has no group and the group is not full and doesn't already request the group.
+
+        if (($nummembers < $maxmembers->maxmembers) && $student->studentgroup == null && $requestmade == 0) {
             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makerequest.php',
                 array('id' => $cm->id, 'groupid' => $newrecord->id)), get_string('send_request', 'mod_findpartner')) . "</td>";
         }
