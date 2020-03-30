@@ -52,8 +52,10 @@ $string['viewrequest'] = 'View request';
 $string['requestmessage'] = 'Request message';
 $string['accept'] = 'Accept';
 $string['deny'] = 'Deny';
-$string[''] = '';
-$string[''] = '';
+$string['cancel'] = 'Cancel';
+$string['joinmessage'] = 'If you click the following button you are accepting to join this activity
+    to find partners for your group. In case you don\'t find any, the system will match you automatically.';
+$string['exit'] = 'Exit activity';
 $string[''] = '';
 $string[''] = '';
 
