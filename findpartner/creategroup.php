@@ -86,11 +86,22 @@ if ($mform->is_cancelled()) {
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
 
+    
+
     // Control that a student doesn't open two tabs and create two groups.
 
     $inagroup = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
     if ($inagroup->studentgroup == null) {
+        $name = $DB->get_record('findpartner_projectgroup', array('name' => $fromform->groupname, 'findpartner' => $moduleinstance->id));
 
+        if($name != null) {
+            // If there is a group with the same name the student has to set another name
+            $message = get_string('groupnameexists', 'mod_findpartner');
+            echo"<script type='text/javascript'>
+                alert('$message');
+                </script>";
+            redirect(new moodle_url ('/mod/findpartner/creategroup.php', array('id' => $cm->id)));
+        } else {
         // Create a new row in the table projectgroup.
 
         $ins = (object)array('findpartner' => $moduleinstance->id, 'description' => $fromform->description,
@@ -123,15 +134,18 @@ if ($mform->is_cancelled()) {
             }
         }
 
+    } 
     } else {
         // This will be fixed, right now we don't know how to call getstring and make the function work.
-        alertmessage('You are already in a group. You can\'t join another');
+        $message = get_string('inagroup', 'mod_findpartner');
+        echo"<script type='text/javascript'>
+            alert('$message');
+            </script>";
     }
-
+    
 
 
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
-
 
 echo $OUTPUT->footer();

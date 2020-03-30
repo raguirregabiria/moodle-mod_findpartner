@@ -25,6 +25,24 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
+
+$id = optional_param('id', 0, PARAM_INT);
+
+// ... module instance id.
+$f  = optional_param('f', 0, PARAM_INT);
+
+if ($id) {
+    $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
+    $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('findpartner', array('id' => $cm->instance), '*', MUST_EXIST);
+} else if ($f) {
+    $moduleinstance = $DB->get_record('findpartner', array('id' => $n), '*', MUST_EXIST);
+    $course         = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
+    $cm             = get_coursemodule_from_instance('findpartner', $moduleinstance->id, $course->id, false, MUST_EXIST);
+} else {
+    print_error(get_string('missingidandcmid', 'mod_findpartner'));
+}
+
 class group_form extends moodleform {
 
     /**
@@ -35,6 +53,8 @@ class group_form extends moodleform {
      * Maximum length of a group name.
      */
     const GROUP_NAME_MAXLEN = 254;
+    
+    // Course_module ID, or.
 
     /**
      * Definition of the form
@@ -46,6 +66,8 @@ class group_form extends moodleform {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
+
+
         $mform->addElement('text', 'groupname', get_string('group_name', 'mod_findpartner'),
             array('size' => '100', 'maxlength' => self::GROUP_NAME_MAXLEN - 1));
         $mform->setType('groupname', PARAM_TEXT);
@@ -54,6 +76,7 @@ class group_form extends moodleform {
                 array('wrap' => 'virtual', 'maxlength' => self::DESCRIPTION_MAXLEN - 1, 'rows' => '3', 'cols' => '102', ''));
         $mform->setType('description', PARAM_NOTAGS);
         $mform->addRule('description', null, 'required', null, 'client');
+
         $this->add_action_buttons(true, get_string('creategroup', 'mod_findpartner'));
         $this->set_data($data);
 
@@ -79,9 +102,7 @@ class group_form extends moodleform {
         if (strlen($groupname) > self::GROUP_NAME_MAXLEN) {
             $errors['groupname'] = get_string('maxcharlenreached', 'mod_findpartner');
         }
-        if (groups_get_group_by_name($COURSE->id, $groupname)) {
-            $errors['groupname'] = get_string('groupnameexists', 'group', $groupname);
-        }
+
         return $errors;
     }
 }

@@ -56,6 +56,6 @@ $string['cancel'] = 'Cancel';
 $string['joinmessage'] = 'If you click the following button you are accepting to join this activity
     to find partners for your group. In case you don\'t find any, the system will match you automatically.';
 $string['exit'] = 'Exit activity';
-$string[''] = '';
+$string['groupnameexists'] = 'There is another group with this name. Please, set another name';
 $string[''] = '';
 
