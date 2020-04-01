@@ -90,10 +90,15 @@ if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is present on form.
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
+    // Check that the student has not made nay other request to this group. The student can make more request if they uses the return page button.
 
-    $ins = (object)array('student' => $USER->id, 'groupid' => $fromform->groupid, 'message' => $fromform->request);
+    $otherrequest = $DB->get_record('findpartner_request', array('student' => $USER->id, 'groupid' => $fromform->groupid));
 
-    $DB->insert_record('findpartner_request', $ins, $returnid = true. $bulk = false);
+    if ($otherrequest == null) {
+        $ins = (object)array('student' => $USER->id, 'groupid' => $fromform->groupid, 'message' => $fromform->request);
+        $DB->insert_record('findpartner_request', $ins, $returnid = true. $bulk = false);
+    }
+       
 
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }

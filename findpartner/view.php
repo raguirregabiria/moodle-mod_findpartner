@@ -148,6 +148,8 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makerequest.php',
                             array('id' => $cm->id, 'groupid' => $newrecord->id)),
                                 get_string('send_request', 'mod_findpartner')) . "</td>";
+                    } else {
+                        echo "<td><center>Already sent</center></td>";
                     }
                 }
             }

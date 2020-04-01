@@ -76,81 +76,98 @@ $project = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $US
 // This is used to know if somebody has pressed a button of accept or deny.
 
 if ($requestid > 0) {
-    $updaterecord = $DB->get_record('findpartner_request', array('id' => $requestid));
-    if ($buttonvalue == 1) {
-        $updaterecord->status = 'A';
-
-        // If a student is accepted, the groupid has to be updated in the student table.
-
-        $ins = $DB->get_record('findpartner_student', array('studentid' => $updaterecord->student,
-            'findpartnerid' => $moduleinstance->id));
-        $ins->studentgroup = $updaterecord->groupid;
-        $DB->update_record('findpartner_student', $ins);
-
-        // If a student is accepted in one group, all his request mush be denied.
-
-        $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->student,
-            'status' => 'P'));
-        foreach ($ins as $row) {
-            $group = $DB->get_record('findpartner_projectgroup', array('id' => $row->groupid));
-            if ($group->findpartner == $moduleinstance->id) {
-                $row->status = "D";
-                $DB->update_record('findpartner_request', $row);
-
+    // Check that the group is not full. The admin can accept more request if they uses the return page button.
+    if (maxmembers($moduleinstance->id) > nummembers($project->id)){
+        $updaterecord = $DB->get_record('findpartner_request', array('id' => $requestid));
+        if ($buttonvalue == 1) {     
+            
+            
+    
+            $updaterecord->status = 'A';
+    
+            // If a student is accepted, the groupid has to be updated in the student table.
+    
+            $ins = $DB->get_record('findpartner_student', array('studentid' => $updaterecord->student,
+                'findpartnerid' => $moduleinstance->id));
+            $ins->studentgroup = $updaterecord->groupid;
+            $DB->update_record('findpartner_student', $ins);
+    
+            // If a student is accepted in one group, all his request mush be denied.
+    
+            $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->student,
+                'status' => 'P'));
+            foreach ($ins as $row) {
+                $group = $DB->get_record('findpartner_projectgroup', array('id' => $row->groupid));
+                if ($group->findpartner == $moduleinstance->id) {
+                    $row->status = "D";
+                    $DB->update_record('findpartner_request', $row);
+    
+                }
             }
+        } else {
+            $updaterecord->status = 'D';
         }
-    } else {
-        $updaterecord->status = 'D';
+        $DB->update_record('findpartner_request', $updaterecord);
+    
+        $morerequestsleft = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
+    
+        if ($morerequestsleft == null) {
+    
+            // If the are no more requests, you go to view.php.
+    
+            redirect(new moodle_url('/mod/findpartner/view.php',
+                array('id' => $cm->id)));
+        } else if (maxmembers($moduleinstance->id) == nummembers($project->id)){
+            // If the group is full, redirect to view
+            // Note that the rest of the request are not denied, just in case a student exists the group.
+            redirect(new moodle_url('/mod/findpartner/view.php',
+                array('id' => $cm->id)));
+        }
+        else {
+            // If there are more and the group is not full, you stay in the request page.
+            // But it has to be refreshed so the accepted or denied request doesn't appear.
+    
+            redirect(new moodle_url('/mod/findpartner/requests.php',
+                array('id' => $cm->id, 'requestid' => -1)));
+        }  
     }
-    $DB->update_record('findpartner_request', $updaterecord);
-
-    $morerequestsleft = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
-
-    if ($morerequestsleft == null) {
-
-        // If the are no more requests, you go to view.php.
-
-        redirect(new moodle_url('/mod/findpartner/view.php',
-            array('id' => $cm->id)));
-    } else if (maxmembers($moduleinstance->id) == nummembers($project->id)){
-        // If the group is full, redirect to view
-        // Note that the rest of the request are not denied, just in case a student exists the group.
-        redirect(new moodle_url('/mod/findpartner/view.php',
-            array('id' => $cm->id)));
-    }
-    else {
-        // If there are more and the group is not full, you stay in the request page.
-        // But it has to be refreshed so the accepted or denied request doesn't appear.
-
-        redirect(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id, 'requestid' => -1)));
-    }
+    
 }
 
 // Show the requests.
 
 $requests = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
-
+// If there are more request.
 if ($requests != null) {
-    echo '<table>';
-    echo "<tr><td>". get_string('requestmessage', 'mod_findpartner') .
-    "</td><td>". get_string('accept', 'mod_findpartner') .
-    "</td><td>". get_string('deny', 'mod_findpartner') ."</td></tr>";
-    foreach ($requests as $request) {
-
-        echo "<tr><td>" . $request->message . "</td>";
-        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 1)),
-                get_string('accept', 'mod_findpartner')) . "</td>";
-
-        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-            array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 0)),
-                get_string('deny', 'mod_findpartner')) . "</td>";
-
-        echo '</tr>';
-
+    // If the group is not full
+    if (maxmembers($moduleinstance->id) > nummembers($project->id)) {
+        // Show requests.
+        echo '<table>';
+        echo "<tr><td>". get_string('requestmessage', 'mod_findpartner') .
+        "</td><td>". get_string('accept', 'mod_findpartner') .
+        "</td><td>". get_string('deny', 'mod_findpartner') ."</td></tr>";
+        foreach ($requests as $request) {
+    
+            echo "<tr><td>" . $request->message . "</td>";
+            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
+                array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 1)),
+                    get_string('accept', 'mod_findpartner')) . "</td>";
+    
+            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
+                array('id' => $cm->id, 'requestid' => $request->id, 'buttonvalue' => 0)),
+                    get_string('deny', 'mod_findpartner')) . "</td>";
+    
+            echo '</tr>';
+    
+        }
+        echo '</table>';
+    } else {
+        echo get_string('groupfull', 'mod_findpartner');
     }
-}
-echo '</table>';
+    
+} else {
+    echo get_string('norequest', 'mod_findpartner');
+} 
+
 
 echo $OUTPUT->footer();

@@ -36,8 +36,8 @@ $string['findpartnername_help'] = 'Put a name for the activity';
 $string['minmembers'] = 'Minimum of members per group';
 $string['maxmembers'] = 'Maximum of members per group';
 $string['dateclosuregroups'] = 'Date when students can\'t join groups anymore';
-$string['error_minmembers'] = 'Error: a group must be formed by two or more members';
-$string['error_maxmembers'] = 'Error: the maximum of members must be greater or equal to the minimum of members';
+$string['error_minmembers'] = 'Error: a group must be formed by two or more members.';
+$string['error_maxmembers'] = 'Error: the maximum of members must be greater or equal to the minimum of members.';
 $string['group_name'] = 'Name of the group';
 $string['group_description'] = 'Description of the group. Please make it good.';
 $string['creategroup'] = 'Create the group';
@@ -56,6 +56,13 @@ $string['cancel'] = 'Cancel';
 $string['joinmessage'] = 'If you click the following button you are accepting to join this activity
     to find partners for your group. In case you don\'t find any, the system will match you automatically.';
 $string['exit'] = 'Exit activity';
-$string['groupnameexists'] = 'There is another group with this name. Please, set another name';
+$string['groupnameexists'] = 'There is another group with this name. Please, set another name.';
+$string['groupfull'] = 'The group is full, you cannot accept more requests.';
+$string['norequest'] = 'There are not more request left.';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string[''] = '';
 
