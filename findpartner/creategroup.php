@@ -86,65 +86,57 @@ if ($mform->is_cancelled()) {
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
 
-    
-
     // Control that a student doesn't open two tabs and create two groups.
 
     $inagroup = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
     if ($inagroup->studentgroup == null) {
-        $name = $DB->get_record('findpartner_projectgroup', array('name' => $fromform->groupname, 'findpartner' => $moduleinstance->id));
+        $name = $DB->get_record('findpartner_projectgroup',
+            array('name' => $fromform->groupname, 'findpartner' => $moduleinstance->id));
 
-        if($name != null) {
-            // If there is a group with the same name the student has to set another name
+        if ($name != null) {
+            // If there is a group with the same name the student has to set another name.
             $message = get_string('groupnameexists', 'mod_findpartner');
-            echo"<script type='text/javascript'>
-                alert('$message');
-                </script>";
+            echo"<script type='text/javascript'>alert('$message');</script>";
             redirect(new moodle_url ('/mod/findpartner/creategroup.php', array('id' => $cm->id)));
         } else {
-        // Create a new row in the table projectgroup.
+            // Create a new row in the table projectgroup.
 
-        $ins = (object)array('findpartner' => $moduleinstance->id, 'description' => $fromform->description,
-            'name' => $fromform->groupname, 'groupadmin' => $USER->id);
+            $ins = (object)array('findpartner' => $moduleinstance->id, 'description' => $fromform->description,
+                'name' => $fromform->groupname, 'groupadmin' => $USER->id);
 
-        $DB->insert_record('findpartner_projectgroup', $ins, $returnid = true. $bulk = false);
-        $groupid = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id,
-            'findpartner' => $moduleinstance->id));
+            $DB->insert_record('findpartner_projectgroup', $ins, $returnid = true. $bulk = false);
+            $groupid = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id,
+                'findpartner' => $moduleinstance->id));
 
-        // Get the record of the studentn in this activity.
-        $updaterecord = $DB->get_record('findpartner_student',
-            array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+            // Get the record of the studentn in this activity.
+            $updaterecord = $DB->get_record('findpartner_student',
+                array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
 
-        // Update the group of the student.
+            // Update the group of the student.
 
-        $updaterecord->studentgroup = $groupid->id;
+            $updaterecord->studentgroup = $groupid->id;
 
-        $DB->update_record('findpartner_student', $updaterecord);
+            $DB->update_record('findpartner_student', $updaterecord);
 
-        // Deny all the request that the student has made.
+            // Deny all the request that the student has made.
 
-        $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->studentid,
-            'status' => 'P'));
-        foreach ($ins as $row) {
-            $group = $DB->get_record('findpartner_projectgroup', array('id' => $groupid->id));
-            if ($group->findpartner == $moduleinstance->id) {
-                $row->status = "D";
-                $DB->update_record('findpartner_request', $row);
+            $ins = $DB->get_records('findpartner_request', array('student' => $updaterecord->studentid,
+                'status' => 'P'));
+            foreach ($ins as $row) {
+                $group = $DB->get_record('findpartner_projectgroup', array('id' => $groupid->id));
+                if ($group->findpartner == $moduleinstance->id) {
+                    $row->status = "D";
+                    $DB->update_record('findpartner_request', $row);
 
+                }
             }
-        }
 
-    } 
+        }
     } else {
         // This will be fixed, right now we don't know how to call getstring and make the function work.
         $message = get_string('inagroup', 'mod_findpartner');
-        echo"<script type='text/javascript'>
-            alert('$message');
-            </script>";
+        echo"<script type='text/javascript'>alert('$message');</script>";
     }
-    
-
-
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 

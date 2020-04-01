@@ -25,7 +25,7 @@
 
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
-require_once('group_form_request.php');
+require_once('locallib.php');
 
 
 
@@ -61,7 +61,7 @@ $modulecontext = context_module::instance($cm->id);
 global $USER;
 global $DB;
 
-$PAGE->set_url('/mod/findpartner/makerequest.php', array('id' => $cm->id, 'groupid' => $groupid));
+$PAGE->set_url('/mod/findpartner/viewgroup.php', array('id' => $cm->id, 'groupid' => $groupid));
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
@@ -69,38 +69,22 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
-$data = array (
-    'id' => $id,
-    'select' => $select,
-    'groupid' => $groupid
-);
-    // Esto queremos tirarlo en el futuro.
-$findpartner = $DB->get_record( 'findpartner', array (
-'id' => 1
-), '*', MUST_EXIST );
+$students = $DB->get_records('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentgroup' => $groupid]);
 
-$mform = new group_form_request( null, array (
-    $data,
-    $findpartner
-) );
+echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
+        get_string('firstname', 'mod_findpartner').'</td><td>'.
+            get_string('lastname', 'mod_findpartner').'</td><td>'.
+                get_string('email', 'mod_findpartner').'</td></tr>';
+echo "id actividad: $moduleinstance->id";
+foreach ($students as $student) {
+    echo $student->studentid;
+    $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
+    echo "<tr><td>" . "$studentinfo->username" .
+        "</td><td>" . "$studentinfo->firstname" . "</td><td>" .
+            "$studentinfo->lastname" . "</td><td>" .
+                "$studentinfo->email" . "</td></tr>";
 
-$mform->display();
-
-if ($mform->is_cancelled()) {
-    // Handle form cancel operation, if cancel button is present on form.
-    redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
-} else if ($fromform = $mform->get_data()) {
-    // Check that the student has not made nay other request to this group.
-    // The student can make more request if they uses the return page button.
-
-    $otherrequest = $DB->get_record('findpartner_request', array('student' => $USER->id, 'groupid' => $fromform->groupid));
-
-    if ($otherrequest == null) {
-        $ins = (object)array('student' => $USER->id, 'groupid' => $fromform->groupid, 'message' => $fromform->request);
-        $DB->insert_record('findpartner_request', $ins, $returnid = true. $bulk = false);
-    }
-    redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
-
+echo "</table>";
 
 echo $OUTPUT->footer();

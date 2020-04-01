@@ -53,7 +53,6 @@ class group_form extends moodleform {
      * Maximum length of a group name.
      */
     const GROUP_NAME_MAXLEN = 254;
-    
     // Course_module ID, or.
 
     /**
@@ -66,8 +65,6 @@ class group_form extends moodleform {
 
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
-
-
         $mform->addElement('text', 'groupname', get_string('group_name', 'mod_findpartner'),
             array('size' => '100', 'maxlength' => self::GROUP_NAME_MAXLEN - 1));
         $mform->setType('groupname', PARAM_TEXT);
