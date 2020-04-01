@@ -14,3 +14,8 @@ Julian Caraux (profesor)
 usuario: julian
 correo: julian@lasombradelviento.com
 contraseña: _tortillaAtun58
+
+Adlet Mayer
+usuario: adlet
+correo: adlet@rokkanoyusa.com
+contraseña: _tortillaAtun58

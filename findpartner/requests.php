@@ -112,9 +112,14 @@ if ($requestid > 0) {
 
         redirect(new moodle_url('/mod/findpartner/view.php',
             array('id' => $cm->id)));
-    } else {
-
-        // If there are more, you stay in the request page.
+    } else if (maxmembers($moduleinstance->id) == nummembers($project->id)){
+        // If the group is full, redirect to view
+        // Note that the rest of the request are not denied, just in case a student exists the group.
+        redirect(new moodle_url('/mod/findpartner/view.php',
+            array('id' => $cm->id)));
+    }
+    else {
+        // If there are more and the group is not full, you stay in the request page.
         // But it has to be refreshed so the accepted or denied request doesn't appear.
 
         redirect(new moodle_url('/mod/findpartner/requests.php',

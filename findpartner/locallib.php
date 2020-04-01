@@ -35,3 +35,14 @@ require_once("$CFG->dirroot/mod/findpartner/lib.php");
 function alertmessage($msg) {
     echo "<script type='text/javascript'>alert('$msg');</script>";
 }
+
+function nummembers($groupid) {
+    global $DB;
+    return $DB->count_records('findpartner_student', array('studentgroup' => $groupid));
+}
+
+function maxmembers($findpartnerid) {
+    global $DB;
+    $activity = $DB->get_record('findpartner', array('id' => $findpartnerid));
+    return $activity->maxmembers;
+}
