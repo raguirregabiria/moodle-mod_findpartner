@@ -76,7 +76,7 @@ $project = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $US
 // This is used to know if somebody has pressed a button of accept or deny.
 
 if ($requestid > 0) {
-    // Check that the group is not full. The admin can accept more request if they uses the return page button.
+    // Check if the group is not full. The admin can accept more request if they uses the return page button.
     if (maxmembers($moduleinstance->id) > nummembers($project->id)) {
         $updaterecord = $DB->get_record('findpartner_request', array('id' => $requestid));
         if ($buttonvalue == 1) {

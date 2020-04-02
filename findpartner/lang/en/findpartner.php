@@ -63,5 +63,14 @@ $string['userid'] = 'User id';
 $string['firstname'] = 'Firstname';
 $string['lastname'] = 'Lastname';
 $string['email'] = 'email';
+$string['enrolstudents'] = 'Enrol students';
+$string['enrol'] = 'Enrol';
 $string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+
 

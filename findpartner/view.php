@@ -73,6 +73,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     // Teacher view.
 
+    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrollstudents.php',
+            array('id' => $cm->id, 'studenttoenroll' => 0)),
+                    get_string('enrolstudents', 'mod_findpartner'));
+
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
 
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
@@ -130,7 +134,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     } else {
         // If the student wants to join gets in the database.
         if ($record == null && $join == 1) {
-            $ins = (object)array('id' => $USER->id, 'studentgroup' => null, 'studentid' => $USER->id,
+            $ins = (object)array('studentgroup' => null, 'studentid' => $USER->id,
                 'findpartnerid' => $moduleinstance->id);
             $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
         }
