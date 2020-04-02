@@ -73,9 +73,13 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     // Teacher view.
 
-    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrollstudents.php',
-            array('id' => $cm->id, 'studenttoenroll' => 0)),
+    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
+            array('id' => $cm->id, 'studenttoenrol' => 0)),
                     get_string('enrolstudents', 'mod_findpartner'));
+
+    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/deenrolstudents.php',
+        array('id' => $cm->id, 'studenttoenrol' => 0)),
+            get_string('deenrolstudents', 'mod_findpartner'));
 
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
 
