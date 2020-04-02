@@ -30,8 +30,9 @@ define('GROUPSELECT_EVENT_TYPE_DUE', 'due');
 require_once("$CFG->dirroot/group/lib.php");
 require_once("$CFG->dirroot/mod/findpartner/lib.php");
 
-// Pops up an alert message.
 
+
+// Pops up an alert message.
 function alertmessage($msg) {
     echo "<script type='text/javascript'>alert('$msg');</script>";
 }
@@ -45,4 +46,17 @@ function maxmembers($findpartnerid) {
     global $DB;
     $activity = $DB->get_record('findpartner', array('id' => $findpartnerid));
     return $activity->maxmembers;
+}
+
+function denyrequests($findpartnerid, $studentid) {
+    global $DB;
+    $ins = $DB->get_records('findpartner_request', array('student' => $studentid,
+    'status' => 'P'));
+    foreach ($ins as $row) {
+        $group = $DB->get_record('findpartner_projectgroup', array('id' => $row->groupid));
+        if ($group->findpartner == $findpartnerid) {
+            $row->status = "D";
+            $DB->update_record('findpartner_request', $row);
+        }
+    }
 }

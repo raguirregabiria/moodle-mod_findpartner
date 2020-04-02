@@ -93,7 +93,7 @@ if ($mform->is_cancelled()) {
     // Check that the student has not made nay other request to this group.
     // The student can make more request if they uses the return page button.
 
-    $otherrequest = $DB->get_record('findpartner_request', array('student' => $USER->id, 'groupid' => $fromform->groupid));
+    $otherrequest = $DB->get_record('findpartner_request', array('student' => $USER->id, 'groupid' => $fromform->groupid, 'status' => 'P'));
 
     if ($otherrequest == null) {
         $ins = (object)array('student' => $USER->id, 'groupid' => $fromform->groupid, 'message' => $fromform->request);

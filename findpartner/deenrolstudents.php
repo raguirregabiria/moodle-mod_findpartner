@@ -70,8 +70,14 @@ echo $OUTPUT->header();
 
 // If there is a deenrol request, then delete the student from the activity.
 if ($studenttodeenrol > 0) {
-    $DB->delete_records('findpartner_student', array('studentid' => $studenttodeenrol,
-        'findpartnerid' => $moduleinstance->id));
+    $thereis = $DB->get_record('findpartner_student', ['studentid' => $studenttodeenrol,
+        'findpartnerid' => $moduleinstance->id]);
+    if ($thereis != null){
+        denyrequests($moduleinstance->id, $studenttodeenrol);
+        $DB->delete_records('findpartner_student', array('studentid' => $studenttodeenrol,
+            'findpartnerid' => $moduleinstance->id));
+    }
+
 
 }
 

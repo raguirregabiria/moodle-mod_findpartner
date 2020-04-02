@@ -124,6 +124,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     if ($exit == 1) {
         $DB->delete_records('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+        denyrequests($moduleinstance->id, $USER->id);
     }
 
     $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id]);
