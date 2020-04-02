@@ -70,9 +70,15 @@ echo $OUTPUT->header();
 
 // If there is an enrol request then insert the student into the activity.
 if ($studenttoenrol > 0) {
-    $ins = (object)array('studentgroup' => null, 'studentid' => $studenttoenrol,
-        'findpartnerid' => $moduleinstance->id);
-    $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
+    $thereis = $DB->get_record('findpartner_student', ['studentid' => $studenttoenrol,
+        'findpartnerid' => $moduleinstance->id]);
+    // If the student is not already in the activity then they are inserted.
+    // That could happen if the teacher press return page button.
+    if ($thereis == null){
+        $ins = (object)array('studentgroup' => null, 'studentid' => $studenttoenrol,
+            'findpartnerid' => $moduleinstance->id);
+        $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
+    }
 }
 
 // All the enrolments id of the course are stored here (manual, guest and self).
