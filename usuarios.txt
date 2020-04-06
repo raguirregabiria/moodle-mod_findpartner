@@ -1,4 +1,5 @@
-Matricular usuarios: http://localhost/user/index.php?id=2
+Matricular usuarios:
+http://localhost/user/index.php?id=2
 
 Hari Seldom: 
 usuario: seldom

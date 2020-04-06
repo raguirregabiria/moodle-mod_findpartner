@@ -66,7 +66,20 @@ $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
 
+
+
 echo $OUTPUT->header();
+
+// Get enrolments, there are thee types of enroll.
+
+$context = context_course::instance($course->id);
+
+$lista = get_enrolled_users($context, 'mod/findpartner:view');
+
+foreach ($lista as $cosa) {
+    echo $cosa->id;
+}
+
 
 // If there is an enrol request then insert the student into the activity.
 if ($studenttoenrol > 0) {

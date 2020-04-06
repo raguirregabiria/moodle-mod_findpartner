@@ -64,8 +64,14 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         )
     ),
-
-
+    // Define only students.
+    'mod/findpartner:student' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW
+        )
+    ),
 
     // Teachers can edit the activity.
     'mod/findpartner:update' => array(
