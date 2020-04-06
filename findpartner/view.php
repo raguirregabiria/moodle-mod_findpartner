@@ -36,8 +36,11 @@ $f  = optional_param('f', 0, PARAM_INT);
 // Value equals to 1 if student joins the activity, 0 if he/seh refuses.
 $join = optional_param('join', 0, PARAM_INT);
 
-// Value equals to 1 if the student wants to exit.
-$exit = optional_param('exit', 0, PARAM_INT);
+// Value equals to 1 if the student wants to exit the activity.
+$exitactivity = optional_param('exitactivity', 0, PARAM_INT);
+
+// Value equals to 1 if the student wants to exit the group.
+$exitgroup = optional_param('exitgroup', 0, PARAM_INT);
 
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
@@ -122,7 +125,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     echo "<center>Este es el id del usuario: $USER->id<br>Este es el id de la actividad: $moduleinstance->id</center>";
     // If the student decided to exit this activity.
 
-    if ($exit == 1) {
+    if ($exitactivity == 1) {
         $DB->delete_records('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
         denyrequests($moduleinstance->id, $USER->id);
     }
@@ -143,12 +146,32 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 'findpartnerid' => $moduleinstance->id);
             $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
         }
+        // If the student wants to exit a group.
+        if ($exitgroup == 1) {
+            if (isadmin($record->studentgroup ,$USER->id)) {
+                // We need to check again if the student is alone in the group.
+                // This could happend in some scerarios.
+                $nummembers = $DB->count_records('findpartner_student', array('studentgroup' => $record->studentgroup));
+                if ($nummembers == 1) {
+                    // Delete group.
+                    $DB->delete_records('findpartner_projectgroup', array('id' => $record->studentgroup));
+                    // Update the group of the student.
+                    $record->studentgroup = null;
+                    $DB->update_record('findpartner_student', $record);
+                }
+
+                
+            } else {
+                $record->studentgroup = null;
+                $DB->update_record('findpartner_student', $record);
+            }
+        }
 
         // This prints the table with the groups.
 
         echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
             get_string('description', 'mod_findpartner').'</td><td>'.
-            get_string('members', 'mod_findpartner').'</td></tr>';
+                get_string('members', 'mod_findpartner').'</td></tr>';
 
         $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
         $student = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
@@ -168,12 +191,11 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
             echo $nummembers . "/" . $maxmembers->maxmembers . "</td>";
 
-            // If there is enough space in the group.
-            if ($nummembers < $maxmembers->maxmembers) {
+            // If the student has no group.
 
-                // If the student has no group.
-
-                if ($student->studentgroup == null) {
+            if ($student->studentgroup == null) {
+                // If there is enough space in the group.
+                if ($nummembers < $maxmembers->maxmembers) {                
 
                     // If the student hasn't got more request pending for this group.
 
@@ -188,6 +210,24 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         echo "<td><center>Already sent</center></td>";
                     }
                 }
+                // If this is the group of the student
+            } else if ($newrecord->id == $student->studentgroup) {
+                // If the student is the admin.
+                if ($USER->id == $newrecord->groupadmin) {
+                    // If the admin is the only member.
+                    if ($nummembers == 1){
+                        // Then can leave.
+                        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                            array('id' => $cm->id, 'exitgroup' => 1)),
+                                get_string('exitgroup', 'mod_findpartner')) . "</td>";
+                    }
+                } else {
+                    // If its not the admin, can leave.
+                    echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                            array('id' => $cm->id, 'exitgroup' => 1)),
+                                get_string('exitgroup', 'mod_findpartner')) . "</td>";
+                }
+                
             }
             echo "</tr>";
         }
@@ -223,7 +263,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 array('id' => $cm->id)), get_string('creategroup', 'mod_findpartner'));
 
             echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
-                array('id' => $cm->id, 'exit' => 1)), get_string('exit', 'mod_findpartner'));
+                array('id' => $cm->id, 'exitactivity' => 1)), get_string('exitactivity', 'mod_findpartner'));
         }
     }
 

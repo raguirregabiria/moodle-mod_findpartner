@@ -60,3 +60,13 @@ function denyrequests($findpartnerid, $studentid) {
         }
     }
 }
+
+function isadmin($groupid, $studentid) {
+    global $DB;
+    $admin = $DB->get_record('findpartner_projectgroup', array('id' => $groupid));
+    if ($studentid == $admin->groupadmin) {
+        return true;
+    } else {
+        return false;
+    }
+}
