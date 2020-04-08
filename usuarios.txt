@@ -20,3 +20,8 @@ Adlet Mayer
 usuario: adlet
 correo: adlet@rokkanoyusa.com
 contraseña: _tortillaAtun58
+
+Ahsoka Tano (profesor sin permiso de edición)
+usuario: ahsoka
+correo: ahsoka@starwars.com
+contraseña: _tortillaAtun58

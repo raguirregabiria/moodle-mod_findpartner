@@ -58,7 +58,7 @@ $modulecontext = context_module::instance($cm->id);
 
 
 global $USER;
-global $DB;
+global $DB; 
 
 $PAGE->set_url('/mod/findpartner/enrolstudents.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -70,6 +70,11 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+if ($studenttoenrol > 0) {
+    $ins = (object)array('studentgroup' => null, 'studentid' => $studenttoenrol,
+        'findpartnerid' => $moduleinstance->id);
+    $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
+}
 
 echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
         get_string('firstname', 'mod_findpartner').'</td><td>'.
@@ -80,11 +85,7 @@ echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
 $context = context_course::instance($course->id);
 
 $studentsid = get_enrolled_users($context, 'mod/findpartner:student');
-
-foreach ($lista as $cosa) {
-    echo $cosa->id;
-}
-
+echo "cualquier cosa";
 foreach ($studentsid as $studentid) {
     $query = $DB->get_record('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentid' => $studentid->id]);
     // If the student is not in the activity we show them.

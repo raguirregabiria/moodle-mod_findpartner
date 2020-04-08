@@ -69,6 +69,11 @@ $PAGE->set_context($modulecontext);
 
 // Header of the page.
 
+// $time1 = time();
+// $fecha = $DB->get_record('findpartner', ['id' => 3]);
+// if ($time1 >= $fecha->dateclosuregroups) {
+//     $DB->delete_records('findpartner', array('id' => 3));
+// }
 
 
 echo $OUTPUT->header();
@@ -85,7 +90,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             get_string('deenrolstudents', 'mod_findpartner'));
 
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
+    $time = getdate(time());
 
+    // echo "<center>$fecha->dateclosuregroups</center>"; 
+    // echo "<center>$time1</center>"; 
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner').'</td><td>'.
             get_string('members', 'mod_findpartner').'</td></tr>';
