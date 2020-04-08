@@ -70,58 +70,32 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
-// Get enrolments, there are thee types of enroll.
-
-$context = context_course::instance($course->id);
-
-$lista = get_enrolled_users($context, 'mod/findpartner:view');
-
-foreach ($lista as $cosa) {
-    echo $cosa->id;
-}
-
-
-// If there is an enrol request then insert the student into the activity.
-if ($studenttoenrol > 0) {
-    $thereis = $DB->get_record('findpartner_student', ['studentid' => $studenttoenrol,
-        'findpartnerid' => $moduleinstance->id]);
-    // If the student is not already in the activity then they are inserted.
-    // That could happen if the teacher press return page button.
-    if ($thereis == null){
-        $ins = (object)array('studentgroup' => null, 'studentid' => $studenttoenrol,
-            'findpartnerid' => $moduleinstance->id);
-        $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
-    }
-}
-
-// All the enrolments id of the course are stored here (manual, guest and self).
-$enrolments = $DB->get_records('enrol', ['courseid' => $course->id]);
 
 echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
         get_string('firstname', 'mod_findpartner').'</td><td>'.
             get_string('lastname', 'mod_findpartner').'</td><td>'.
                 get_string('email', 'mod_findpartner').'</td></tr>';
 
-// All the students of the course are stored here.
-$studentsid = array();
-foreach ($enrolments as $enrolment) {
-    $usersid = $DB->get_records('user_enrolments', ['enrolid' => $enrolment->id]);
-    foreach ($usersid as $userid) {
-        array_push($studentsid, $userid->userid);        
-    }
+
+$context = context_course::instance($course->id);
+
+$studentsid = get_enrolled_users($context, 'mod/findpartner:student');
+
+foreach ($lista as $cosa) {
+    echo $cosa->id;
 }
 
 foreach ($studentsid as $studentid) {
-    $query = $DB->get_record('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentid' => $studentid]);
+    $query = $DB->get_record('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentid' => $studentid->id]);
     // If the student is not in the activity we show them.
     if ($query == null) {
-        $studentinfo = $DB->get_record('user', ['id' => $studentid]);
+        $studentinfo = $DB->get_record('user', ['id' => $studentid->id]);
         echo "<tr><td>" . "$studentinfo->username" .
         "</td><td>" . "$studentinfo->firstname" . "</td><td>" .
             "$studentinfo->lastname" . "</td><td>" .
                 "$studentinfo->email" . "</td><td>". 
                 $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
-                array('id' => $cm->id, 'studenttoenrol' => $studentid)),
+                array('id' => $cm->id, 'studenttoenrol' => $studentid->id)),
                     get_string('enrol', 'mod_findpartner')) . "</td></tr>";
     }
 }
