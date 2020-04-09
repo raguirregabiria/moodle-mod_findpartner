@@ -69,3 +69,9 @@ function isadmin($groupid, $studentid) {
         return false;
     }
 }
+
+// This function match all the students with no group.
+function matchall($findpartner) {
+    global $DB;
+    $groups = $DB->get_records('findpartner_projectgroup', array('findpartner' => $findpartner->id));
+}
