@@ -25,11 +25,10 @@
 defined('MOODLE_INTERNAL') || die;
 
 // Event types.
-define('GROUPSELECT_EVENT_TYPE_DUE', 'due');
+define('FINDPARTNER_EVENT_TYPE_DUE', 'due');
 
 require_once("$CFG->dirroot/group/lib.php");
 require_once("$CFG->dirroot/mod/findpartner/lib.php");
-
 
 
 // Pops up an alert message.
