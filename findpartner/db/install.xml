@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/findpartner/db" VERSION="20200325" COMMENT="XMLDB file for Moodle mod_findpartner"
+<XMLDB PATH="mod/findpartner/db" VERSION="20200420" COMMENT="XMLDB file for Moodle mod_findpartner"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -29,6 +29,7 @@
         <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="A short description of the group."/>
         <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the group"/>
         <FIELD NAME="groupadmin" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The admin of the group (who is an student)."/>
+        <FIELD NAME="contractstatus" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="P" SEQUENCE="false" COMMENT="'P' for pending, 'Y' the group has a contract, 'N' the group has not contract"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="id_group" TYPE="primary" FIELDS="id" COMMENT="This is the group id."/>
@@ -52,14 +53,22 @@
         <FIELD NAME="student" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The student who wants to join the group."/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The group who is asked for the student to get in."/>
         <FIELD NAME="message" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The message of the request."/>
-        <FIELD NAME="status" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="P" SEQUENCE="false" COMMENT="The status of the request:
-P: pending
-A: accepted
-D: denied"/>
+        <FIELD NAME="status" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="P" SEQUENCE="false" COMMENT="The status of the request: P: pending A: accepted D: denied"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_student" TYPE="foreign" FIELDS="student" REFTABLE="findpartner_student" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="findpartner_votes" COMMENT="Votes of the group for making contracts">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the group"/>
+        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the student"/>
+        <FIELD NAME="vote" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="Y to doing the contract, N to not"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

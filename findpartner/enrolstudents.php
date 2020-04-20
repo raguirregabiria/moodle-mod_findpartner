@@ -85,7 +85,7 @@ echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
 $context = context_course::instance($course->id);
 
 $studentsid = get_enrolled_users($context, 'mod/findpartner:student');
-echo "cualquier cosa";
+
 foreach ($studentsid as $studentid) {
     $query = $DB->get_record('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentid' => $studentid->id]);
     // If the student is not in the activity we show them.
