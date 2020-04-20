@@ -42,6 +42,9 @@ $exitactivity = optional_param('exitactivity', 0, PARAM_INT);
 // Value equals to 1 if the student wants to exit the group.
 $exitgroup = optional_param('exitgroup', 0, PARAM_INT);
 
+// Value equals to 1 if the student wants to make contract, 2 if not.
+$contract = optional_param('contract', 0, PARAM_INT);
+
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
     $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -67,13 +70,6 @@ $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
-// Header of the page.
-
-// $time1 = time();
-// $fecha = $DB->get_record('findpartner', ['id' => 3]);
-// if ($time1 >= $fecha->dateclosuregroups) {
-//     $DB->delete_records('findpartner', array('id' => 3));
-// }
 
 
 echo $OUTPUT->header();
@@ -92,8 +88,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
     $time = getdate(time());
 
-    // echo "<center>$fecha->dateclosuregroups</center>"; 
-    // echo "<center>$time1</center>"; 
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner').'</td><td>'.
             get_string('members', 'mod_findpartner').'</td></tr>';
@@ -136,7 +130,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     // If the date of closure groups has not come, the students can create and join groups.
 
-    if(time() < $time->dateclosuregroups) {
+    if (time() < $time->dateclosuregroups) {
         if ($exitactivity == 1) {
             $DB->delete_records('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
             denyrequests($moduleinstance->id, $USER->id);
@@ -160,7 +154,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             }
             // If the student wants to exit a group.
             if ($exitgroup == 1) {
-                if (isadmin($record->studentgroup ,$USER->id)) {
+                if (isadmin($record->studentgroup, $USER->id)) {
                     // We need to check again if the student is alone in the group.
                     // This could happend in some scerarios.
                     $nummembers = $DB->count_records('findpartner_student', array('studentgroup' => $record->studentgroup));
@@ -171,8 +165,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         $record->studentgroup = null;
                         $DB->update_record('findpartner_student', $record);
                     }
-
-                    
                 } else {
                     $record->studentgroup = null;
                     $DB->update_record('findpartner_student', $record);
@@ -186,7 +178,8 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     get_string('members', 'mod_findpartner').'</td></tr>';
 
             $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
-            $student = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+            $student = $DB->get_record('findpartner_student',
+                array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
             foreach ($newrecords as $newrecord) {
                 $maxmembers = $DB->get_record('findpartner', ['id' => $newrecord->findpartner]);
                 $nummembers = $DB->count_records('findpartner_student', array('studentgroup' => $newrecord->id));
@@ -207,7 +200,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
                 if ($student->studentgroup == null) {
                     // If there is enough space in the group.
-                    if ($nummembers < $maxmembers->maxmembers) {                
+                    if ($nummembers < $maxmembers->maxmembers) {
 
                         // If the student hasn't got more request pending for this group.
 
@@ -222,12 +215,12 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                             echo "<td><center>Already sent</center></td>";
                         }
                     }
-                    // If this is the group of the student
+                    // If this is the group of the student.
                 } else if ($newrecord->id == $student->studentgroup) {
                     // If the student is the admin.
                     if ($USER->id == $newrecord->groupadmin) {
                         // If the admin is the only member.
-                        if ($nummembers == 1){
+                        if ($nummembers == 1) {
                             // Then can leave.
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                                 array('id' => $cm->id, 'exitgroup' => 1)),
@@ -239,7 +232,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                                 array('id' => $cm->id, 'exitgroup' => 1)),
                                     get_string('exitgroup', 'mod_findpartner')) . "</td>";
                     }
-                    
                 }
                 echo "</tr>";
             }
@@ -280,9 +272,44 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         }
         // The groups are close.
     } else {
-        // The student have 24 hours (86000 seconds) to decide if they want to make contracts.
-        if(time() < ($time->dateclosuregroups + 86400)) {
-            echo "<center>" . get_string('alertcontract', 'mod_findpartner') . "</center>";
+
+        $student = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+        $group = $DB->get_record('findpartner_projectgroup', array('id' => $student->studentgroup));
+        // If the student has vote to make the contract.
+        if ($contract == 1) {
+            $ins = (object)array('groupid' => $group->id, 'studentid' => $USER->id, 'vote' => 'Y');
+            $DB->insert_record('findpartner_votes', $ins, $returnid = true. $bulk = false);
+        } else if ($contract == 2) {
+            $ins = (object)array('groupid' => $group->id, 'studentid' => $USER->id, 'vote' => 'N');
+            $DB->insert_record('findpartner_votes', $ins, $returnid = true. $bulk = false);
+        }
+        if ($group->contractstatus == 'P') {
+            // The student have 24 hours (86000 seconds) to decide if they want to make contracts.
+            if (time() < ($time->dateclosuregroups + 86400)) {
+                // TODO Put button that says what is a contract.
+                // TODO if everyone has voted, change conractstatus.
+                echo "<center>" . get_string('alertcontract', 'mod_findpartner') . "</center>";
+
+                $vote = $DB->get_record('findpartner_votes', array('studentid' => $USER->id, 'groupid' => $group->id));
+
+                // If the student hasn't voted.
+
+                if ($vote == null) {
+                    echo "<center>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                        array('id' => $cm->id, 'contract' => 1)), get_string('contractyes', 'mod_findpartner'));
+                    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                        array('id' => $cm->id, 'contract' => 2)), get_string('contractno', 'mod_findpartner')) . "<center>";
+                }
+            } else {
+                if (contractapproved($group->id)) {
+                    $group->contractstatus = 'Y';
+                } else {
+                    $group->contractstatus = 'N';
+                }
+                $DB->update_record('findpartner_projectgroup', $group);
+                redirect(new moodle_url('/mod/findpartner/view.php',
+                    array('id' => $cm->id)));
+            }
         }
     }
 }

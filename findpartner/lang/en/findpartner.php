@@ -71,8 +71,8 @@ $string['deenrol'] = 'De-enrol';
 $string['duedate'] = 'End date for joining groups';
 $string['autogroup'] = 'Autogroup task';
 $string['alertcontract'] = 'You have 24 hours to decide between all the members of the group if you want to make contracts.';
-$string[''] = '';
-$string[''] = '';
+$string['contractyes'] = 'I want to make a contract';
+$string['contractno'] = 'I don\'t want to make a contract';
 $string[''] = '';
 $string[''] = '';
 

@@ -58,7 +58,7 @@ $modulecontext = context_module::instance($cm->id);
 
 
 global $USER;
-global $DB; 
+global $DB;
 
 $PAGE->set_url('/mod/findpartner/enrolstudents.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -94,10 +94,10 @@ foreach ($studentsid as $studentid) {
         echo "<tr><td>" . "$studentinfo->username" .
         "</td><td>" . "$studentinfo->firstname" . "</td><td>" .
             "$studentinfo->lastname" . "</td><td>" .
-                "$studentinfo->email" . "</td><td>". 
-                $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
-                array('id' => $cm->id, 'studenttoenrol' => $studentid->id)),
-                    get_string('enrol', 'mod_findpartner')) . "</td></tr>";
+                "$studentinfo->email" . "</td><td>".
+                    $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
+                        array('id' => $cm->id, 'studenttoenrol' => $studentid->id)),
+                            get_string('enrol', 'mod_findpartner')) . "</td></tr>";
     }
 }
 

@@ -75,3 +75,12 @@ function matchall($findpartner) {
     global $DB;
     $groups = $DB->get_records('findpartner_projectgroup', array('findpartner' => $findpartner->id));
 }
+// Returns True if the contract will be done, False if not.
+// It only counts the students that have voted.
+function contractapproved($groupid) {
+    global $DB;
+    $yes = $DB->count_records('findpartner_votes', array('groupid' => $groupid, 'vote' => 'Y'));
+    $no = $DB->count_records('findpartner_votes', array('groupid' => $groupid, 'vote' => 'N'));
+    return $yes >= $no;
+
+}

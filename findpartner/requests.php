@@ -85,7 +85,7 @@ if ($requestid > 0) {
         // The student must be in the activity.
         // This scenario is possible when the student exit and the admin accept a previus
         // request because the page hasn't been refreshed.
-        if ($thereis != null){
+        if ($thereis != null) {
             if ($buttonvalue == 1) {
 
                 $updaterecord->status = 'A';

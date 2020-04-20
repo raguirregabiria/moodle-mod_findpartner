@@ -72,7 +72,7 @@ echo $OUTPUT->header();
 if ($studenttodeenrol > 0) {
     $thereis = $DB->get_record('findpartner_student', ['studentid' => $studenttodeenrol,
         'findpartnerid' => $moduleinstance->id]);
-    if ($thereis != null){
+    if ($thereis != null) {
         denyrequests($moduleinstance->id, $studenttodeenrol);
         $DB->delete_records('findpartner_student', array('studentid' => $studenttodeenrol,
             'findpartnerid' => $moduleinstance->id));
@@ -93,11 +93,10 @@ foreach ($students as $student) {
     echo "<tr><td>" . "$studentinfo->username" .
         "</td><td>" . "$studentinfo->firstname" . "</td><td>" .
             "$studentinfo->lastname" . "</td><td>" .
-                "$studentinfo->email" . "</td><td>". 
+                "$studentinfo->email" . "</td><td>".
     $OUTPUT->single_button(new moodle_url('/mod/findpartner/deenrolstudents.php',
         array('id' => $cm->id, 'studenttodeenrol' => $student->studentid)),
             get_string('deenrol', 'mod_findpartner')) . "</td></tr>";
-    
 }
 
 echo "</table>";

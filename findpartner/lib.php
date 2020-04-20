@@ -90,8 +90,7 @@ function findpartner_update_instance($moduleinstance, $mform = null) {
     if (!empty($moduleinstance->completionexpected)) {
         \core_completion\api::update_completion_date_event($moduleinstance->coursemodule, 'findpartner', $moduleinstance->id,
                 $moduleinstance->completionexpected);
-    }   
-    
+    }
     return true;
 }
 
