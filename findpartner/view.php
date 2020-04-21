@@ -287,26 +287,30 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             // The student have 24 hours (86000 seconds) to decide if they want to make contracts.
             if (time() < ($time->dateclosuregroups + 86400)) {
                 // TODO Put button that says what is a contract.
-                // TODO if everyone has voted, change conractstatus.
-                echo "<center>" . get_string('alertcontract', 'mod_findpartner') . "</center>";
+                $numvotes = $DB->count_records('findpartner_votes', array('groupid' => $group->id));
+                $numstudents = nummembers($group->id);
+                
+                if ($numvotes < $numstudents) {
 
-                $vote = $DB->get_record('findpartner_votes', array('studentid' => $USER->id, 'groupid' => $group->id));
+                    echo "<center>" . get_string('alertcontract', 'mod_findpartner') . "</center>";
 
-                // If the student hasn't voted.
+                    $vote = $DB->get_record('findpartner_votes', array('studentid' => $USER->id, 'groupid' => $group->id));
 
-                if ($vote == null) {
-                    echo "<center>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
-                        array('id' => $cm->id, 'contract' => 1)), get_string('contractyes', 'mod_findpartner'));
-                    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
-                        array('id' => $cm->id, 'contract' => 2)), get_string('contractno', 'mod_findpartner')) . "<center>";
+                    // If the student hasn't voted.
+
+                    if ($vote == null) {
+                        echo "<center>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                            array('id' => $cm->id, 'contract' => 1)), get_string('contractyes', 'mod_findpartner'));
+                        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                            array('id' => $cm->id, 'contract' => 2)), get_string('contractno', 'mod_findpartner')) . "<center>";
+                    }
+                } else {
+                    updatestatus($group);
+                    redirect(new moodle_url('/mod/findpartner/view.php',
+                        array('id' => $cm->id)));
                 }
             } else {
-                if (contractapproved($group->id)) {
-                    $group->contractstatus = 'Y';
-                } else {
-                    $group->contractstatus = 'N';
-                }
-                $DB->update_record('findpartner_projectgroup', $group);
+                updatestatus($group);
                 redirect(new moodle_url('/mod/findpartner/view.php',
                     array('id' => $cm->id)));
             }

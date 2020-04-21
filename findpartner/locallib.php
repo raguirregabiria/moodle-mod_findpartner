@@ -84,3 +84,14 @@ function contractapproved($groupid) {
     return $yes >= $no;
 
 }
+
+// Update projectgroup table
+function updatestatus($group) {
+    global $DB;
+    if (contractapproved($group->id)) {
+        $group->contractstatus = 'Y';
+    } else {
+        $group->contractstatus = 'N';
+    }
+    $DB->update_record('findpartner_projectgroup', $group);
+}
