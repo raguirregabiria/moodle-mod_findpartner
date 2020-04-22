@@ -314,7 +314,11 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 redirect(new moodle_url('/mod/findpartner/view.php',
                     array('id' => $cm->id)));
             }
-        }
+        } //else if ($group->contractstatus == 'Y') {
+            
+        //}
+        
+        
     }
 }
 echo $OUTPUT->footer();
