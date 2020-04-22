@@ -314,9 +314,14 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 redirect(new moodle_url('/mod/findpartner/view.php',
                     array('id' => $cm->id)));
             }
-        } //else if ($group->contractstatus == 'Y') {
-            
-        //}
+        } else if ($group->contractstatus == 'Y') {
+            // If the student is admin they can create work blocks.
+            if ($group->groupadmin == $USER->id) {
+                echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
+                    array('id' => $cm->id, 'groupid' => $group->id)),
+                        get_string('create_block', 'mod_findpartner')) . "</td>";
+            }
+         } // TODO poner el chat
         
         
     }

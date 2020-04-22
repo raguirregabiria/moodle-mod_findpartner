@@ -25,37 +25,55 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->dirroot.'/lib/formslib.php');
 
-class group_form_request extends moodleform {
+class workblock_form extends moodleform {
 
     /**
      * Maximum length of the group request.
      */
-    const REQUEST_MAXLEN = 1024;
+    const TASK_MAXLEN = 1024;
 
 
     /**
      * Definition of the form
      */
     public function definition() {
-
+        global $DB;
         $mform = $this->_form;
         list($data) = $this->_customdata;
 
         $mform->addElement('hidden', 'id');
-
         $mform->setType('id', PARAM_INT);
+
         // This is necessary to save the groupid in makerequest.
         $mform->addElement('hidden', 'groupid');
-
         $mform->setType('groupid', PARAM_INT);
-        $mform->addElement('textarea', 'request', get_string('request', 'mod_findpartner'),
-                array('wrap' => 'virtual', 'maxlength' => self::REQUEST_MAXLEN - 1, 'rows' => '3', 'cols' => '102', ''));
 
-        $mform->setType('request', PARAM_NOTAGS);
+        $mform->addElement('textarea', 'task', get_string('task', 'mod_findpartner'),
+                array('wrap' => 'virtual', 'maxlength' => self::TASK_MAXLEN - 1, 'rows' => '3', 'cols' => '102', ''));
 
-        $mform->addRule('request', null, 'required', null, 'client');
+        $mform->setType('task', PARAM_NOTAGS);
 
-        $this->add_action_buttons(true, get_string('send', 'mod_findpartner'));
+        $mform->addRule('task', null, 'required', null, 'client');
+
+        
+        $students = $DB->get_records('findpartner_student', ['studentgroup' => $data['groupid']]);
+        
+        $arraystudents = [];
+
+        // We need this in order to save the member id.
+        foreach ($students as $student) {
+            $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
+            //array_push($arraystudents,$studentinfo->firstname . ' ' . $studentinfo->lastname);
+            $arraystudents[$student->studentid] = $studentinfo->firstname . ' ' . $studentinfo->lastname;
+        }
+        
+        // This allows the user to make multiple choice.
+        $select = $mform->addElement('select', 'members', get_string('members'), $arraystudents, $attributes);
+        $select->setMultiple(true);
+        $mform->setType('members', PARAM_NOTAGS);
+        $mform->addRule('members', null, 'required', null, 'client');
+
+        $this->add_action_buttons(true, get_string('createblock', 'mod_findpartner'));
 
         $this->set_data($data);
 
@@ -73,9 +91,9 @@ class group_form_request extends moodleform {
 
         $errors = parent::validation($data, $files);
 
-        $request = $data['request'];
-        if (strlen($request) > self::REQUEST_MAXLEN) {
-            $errors['request'] = get_string('maxcharlenreached', 'mod_findpartner');
+        $task = $data['task'];
+        if (strlen($task) > self::TASK_MAXLEN) {
+            $errors['task'] = get_string('maxcharlenreached', 'mod_findpartner');
         }
         return $errors;
     }

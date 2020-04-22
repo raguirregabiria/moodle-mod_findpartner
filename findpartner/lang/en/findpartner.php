@@ -73,6 +73,12 @@ $string['autogroup'] = 'Autogroup task';
 $string['alertcontract'] = 'You have 24 hours to decide between all the members of the group if you want to make contracts.';
 $string['contractyes'] = 'I want to make a contract';
 $string['contractno'] = 'I don\'t want to make a contract';
+$string['task'] = 'Content of the task';
+$string['create_block'] = 'Create a block of work';
+$string['createblock'] = 'Create block';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string[''] = '';
 $string[''] = '';
 
