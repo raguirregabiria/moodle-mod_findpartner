@@ -45,6 +45,12 @@ $exitgroup = optional_param('exitgroup', 0, PARAM_INT);
 // Value equals to 1 if the student wants to make contract, 2 if not.
 $contract = optional_param('contract', 0, PARAM_INT);
 
+// Value equals to 1 if the student agrees with the block, 2 if not.
+$workblockvote = optional_param('workblockvote', 0, PARAM_INT);
+
+// Id of the workblock the user has vote.
+$workblockid = optional_param('workblockid', 0, PARAM_INT);
+
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
     $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -322,6 +328,19 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     array('id' => $cm->id, 'groupid' => $group->id)),
                         get_string('create_block', 'mod_findpartner')) . "</td>";
             }
+            
+            // Insert votes.
+            if ($workblockvote != 0){
+                if($workblockvote == 1) {
+                    $ins = (object)array('workblockid' => $workblockid, 'studentid' => $USER->id,
+                        'vote' => 'A');
+                } else if($workblockvote == 2) {
+                    $ins = (object)array('workblockid' => $workblockid, 'studentid' => $USER->id,
+                        'vote' => 'D');
+                }
+                $DB->insert_record('findpartner_workblockvotes', $ins, $returnid = true. $bulk = false);
+            }            
+
 
             // Show workblocks.
             echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner').'</td><td>'.
@@ -335,7 +354,24 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
 
                 }
+                echo "</td><td>";
+                
+                $hasworkblockvote = $DB->get_record('findpartner_workblockvotes', array('studentid' => $USER->id, 'workblockid' => $workblock->id));
+                
+                // If the student has vote, can't vote again
+                if ($hasworkblockvote == null) {                
 
+                    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                        array('id' => $cm->id,  'workblockvote' => 1, 'workblockid' => $workblock->id)),
+                            get_string('accept', 'mod_findpartner'));
+                    
+                    echo "</td><td>";                
+                    
+
+                    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                        array('id' => $cm->id,  'workblockvote' => 2, 'workblockid' => $workblock->id)),
+                            get_string('deny', 'mod_findpartner'));
+                }
                 echo '</td></tr>';
 
             }
