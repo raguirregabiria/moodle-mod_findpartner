@@ -284,7 +284,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             $DB->insert_record('findpartner_votes', $ins, $returnid = true. $bulk = false);
         }
         if ($group->contractstatus == 'P') {
-            // The student have 24 hours (86000 seconds) to decide if they want to make contracts.
+            // The student has 24 hours (86400 seconds) to decide if they want to make contracts.
             if (time() < ($time->dateclosuregroups + 86400)) {
                 // TODO Put button that says what is a contract.
                 $numvotes = $DB->count_records('findpartner_votes', array('groupid' => $group->id));
@@ -314,6 +314,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 redirect(new moodle_url('/mod/findpartner/view.php',
                     array('id' => $cm->id)));
             }
+            // If the contract is made.
         } else if ($group->contractstatus == 'Y') {
             // If the student is admin they can create work blocks.
             if ($group->groupadmin == $USER->id) {
@@ -321,7 +322,27 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     array('id' => $cm->id, 'groupid' => $group->id)),
                         get_string('create_block', 'mod_findpartner')) . "</td>";
             }
-         } // TODO poner el chat
+
+            // Show workblocks.
+            echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner').'</td><td>'.
+                get_string('memberstable', 'mod_findpartner').'</td></tr>';
+            $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $group->id]);
+            foreach ($workblocks as $workblock) {
+                echo '<tr><td>' . $workblock->task . '</td><td>';
+                $studentsname = $DB->get_records('findpartner_incharge', ['workblockid' => $workblock->id]);
+                foreach ($studentsname as $studentname) {
+                    $studentinfo = $DB->get_record('user', ['id' => $studentname->studentid]);
+                    echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
+
+                }
+
+                echo '</td></tr>';
+
+            }
+            echo '</table>';
+
+
+        } // TODO poner el chat.
         
         
     }

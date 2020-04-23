@@ -63,15 +63,15 @@ class workblock_form extends moodleform {
         // We need this in order to save the member id.
         foreach ($students as $student) {
             $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
-            //array_push($arraystudents,$studentinfo->firstname . ' ' . $studentinfo->lastname);
             $arraystudents[$student->studentid] = $studentinfo->firstname . ' ' . $studentinfo->lastname;
         }
         
         // This allows the user to make multiple choice.
-        $select = $mform->addElement('select', 'members', get_string('members'), $arraystudents, $attributes);
+        $select = $mform->addElement('select', 'members', get_string('members', 'mod_findpartner'), $arraystudents, $attributes);
         $select->setMultiple(true);
         $mform->setType('members', PARAM_NOTAGS);
         $mform->addRule('members', null, 'required', null, 'client');
+        $mform->addHelpButton('members', 'membershelp', 'mod_findpartner');
 
         $this->add_action_buttons(true, get_string('createblock', 'mod_findpartner'));
 

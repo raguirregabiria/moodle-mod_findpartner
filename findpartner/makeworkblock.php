@@ -22,13 +22,9 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
 require_once('workblock_form.php');
-
-
-
 
 // Course_module ID, or.
 $id = optional_param('id', 0, PARAM_INT);
@@ -38,7 +34,6 @@ $f  = optional_param('f', 0, PARAM_INT);
 
 // Groupid.
 $groupid = optional_param('groupid', 0, PARAM_INT);
-
 
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
@@ -57,7 +52,6 @@ require_login($course, true, $cm);
 
 $modulecontext = context_module::instance($cm->id);
 
-
 global $USER;
 global $DB;
 
@@ -65,7 +59,6 @@ $PAGE->set_url('/mod/findpartner/makeworkblock.php', array('id' => $cm->id, 'gro
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
-
 
 echo $OUTPUT->header();
 
@@ -90,13 +83,20 @@ if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is present on form.
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
-    // Check that the student has not made nay other request to this group.
-    // The student can make more request if they uses the return page button.
-
+    // TODO handle cases when a student opens multiple tabsor press the return button.
+    // Insert the work block.
     $ins = (object)array('groupid' => $fromform->groupid, 'task' => $fromform->task);
-    $DB->insert_record('findpartner_workblock', $ins, $returnid = true. $bulk = false);
+    $workblockid = $DB->insert_record('findpartner_workblock', $ins, $returnid = true. $bulk = false);
+
+    // Insert the students in charge of that block.
+    foreach ($fromform->members as $memberid) {
+        $ins = (object)array('studentid' => $memberid,'workblockid'=>$workblockid);
+        $DB->insert_record('findpartner_incharge', $ins, $returnid = true. $bulk = false);
+
+    }
     
-    //redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
+
+    redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 
 
