@@ -339,14 +339,38 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         'vote' => 'D');
                 }
                 $DB->insert_record('findpartner_workblockvotes', $ins, $returnid = true. $bulk = false);
+
+                // Here we check if workblock status need to be changed.
+                $votes = $DB->count_records('findpartner_workblockvotes', array('workblockid' => $workblockid));
+                if ($votes == nummembers($group->id)) {
+                    $record = $DB->get_record('findpartner_workblock', ['id' => $workblockid]);
+                    if (workblockapproved($workblockid)) {
+                        $record->status = 'A';
+                        $DB->update_record('findpartner_workblock', $record);
+                    } else {
+                        $record->status = 'D';
+                        $DB->update_record('findpartner_workblock', $record);
+                    }
+                }
+                
             }            
 
+            echo "<style>
+            table, td {
+              border: 1px solid black;
+            }
+            
+            td {
+              padding: 10px;
+            }
+            </style>";
 
             // Show workblocks.
             echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner').'</td><td>'.
-                get_string('memberstable', 'mod_findpartner').'</td></tr>';
+                get_string('memberstable', 'mod_findpartner').'</td><td>' . 
+                    get_string('workblockstatus', 'mod_findpartner').'</td></tr>';
             $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $group->id]);
-            foreach ($workblocks as $workblock) {
+            foreach ($workblocks as $workblock) {                
                 echo '<tr><td>' . $workblock->task . '</td><td>';
                 $studentsname = $DB->get_records('findpartner_incharge', ['workblockid' => $workblock->id]);
                 foreach ($studentsname as $studentname) {
@@ -354,11 +378,12 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
 
                 }
+                echo "<td>" . $workblock->status . "</td>";
                 echo "</td><td>";
                 
                 $hasworkblockvote = $DB->get_record('findpartner_workblockvotes', array('studentid' => $USER->id, 'workblockid' => $workblock->id));
                 
-                // If the student has vote, can't vote again
+                // If the student has voted, can't vote again
                 if ($hasworkblockvote == null) {                
 
                     echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',

@@ -82,7 +82,14 @@ function contractapproved($groupid) {
     $yes = $DB->count_records('findpartner_votes', array('groupid' => $groupid, 'vote' => 'Y'));
     $no = $DB->count_records('findpartner_votes', array('groupid' => $groupid, 'vote' => 'N'));
     return $yes >= $no;
+}
 
+// Returns True if the block will be done, False if not.
+function workblockapproved($workblockid) {
+    global $DB;
+    $yes = $DB->count_records('findpartner_workblockvotes', array('workblockid' => $workblockid, 'vote' => 'A'));
+    $no = $DB->count_records('findpartner_workblockvotes', array('workblockid' => $workblockid, 'vote' => 'D'));
+    return $yes >= $no;
 }
 
 // Update projectgroup table
