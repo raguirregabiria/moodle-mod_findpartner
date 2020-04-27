@@ -382,30 +382,29 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
     
                     }
-                    echo "<td>" . $workblock->status;
-                    echo "</td><td>";
+                    echo "</td>";
+                    echo "<td>" . $workblock->status ."</td>";
                     
                     $hasworkblockvote = $DB->get_record('findpartner_workblockvotes', array('studentid' => $USER->id, 'workblockid' => $workblock->id));
                     
                     // If the student has voted, can't vote again
                     if ($hasworkblockvote == null) {                
-    
+                        echo '<td>';
                         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                             array('id' => $cm->id,  'workblockvote' => 1, 'workblockid' => $workblock->id)),
                                 get_string('accept', 'mod_findpartner'));
                         
-                        echo "</td><td>";                
-                        
-    
+                        echo "</td><td>";
+
                         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                             array('id' => $cm->id,  'workblockvote' => 2, 'workblockid' => $workblock->id)),
                                 get_string('deny', 'mod_findpartner'));
+                        echo '</td>';
                     }
     
                     // If the workblock has been denied the admin can edit it.
                     if ($istheadmin) {
                         if ($workblock->status == 'D'){
-                            echo '</td><td>';
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
                             array('id' => $cm->id, 'groupid' => $group->id, 'editworkblock' => $workblock->id)),
                                 get_string('edit', 'mod_findpartner')) . "</td>";
@@ -413,7 +412,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     
     
                     }
-                    echo '</td></tr>';
+                    echo '</tr>';
                 }             
 
 
