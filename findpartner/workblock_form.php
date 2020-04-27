@@ -48,6 +48,10 @@ class workblock_form extends moodleform {
         $mform->addElement('hidden', 'groupid');
         $mform->setType('groupid', PARAM_INT);
 
+        // This is necessary to change workblock status when editing.
+        $mform->addElement('hidden', 'editworkblock');
+        $mform->setType('editworkblock', PARAM_INT);
+
         $mform->addElement('textarea', 'task', get_string('task', 'mod_findpartner'),
                 array('wrap' => 'virtual', 'maxlength' => self::TASK_MAXLEN - 1, 'rows' => '3', 'cols' => '102', ''));
 

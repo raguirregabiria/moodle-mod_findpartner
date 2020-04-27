@@ -323,7 +323,8 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             // If the contract is made.
         } else if ($group->contractstatus == 'Y') {
             // If the student is admin they can create work blocks.
-            if ($group->groupadmin == $USER->id) {
+            $istheadmin = $group->groupadmin == $USER->id;
+            if ($istheadmin) {
                 echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
                     array('id' => $cm->id, 'groupid' => $group->id)),
                         get_string('create_block', 'mod_findpartner')) . "</td>";
@@ -370,34 +371,51 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 get_string('memberstable', 'mod_findpartner').'</td><td>' . 
                     get_string('workblockstatus', 'mod_findpartner').'</td></tr>';
             $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $group->id]);
-            foreach ($workblocks as $workblock) {                
-                echo '<tr><td>' . $workblock->task . '</td><td>';
-                $studentsname = $DB->get_records('findpartner_incharge', ['workblockid' => $workblock->id]);
-                foreach ($studentsname as $studentname) {
-                    $studentinfo = $DB->get_record('user', ['id' => $studentname->studentid]);
-                    echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
+            foreach ($workblocks as $workblock) {   
 
-                }
-                echo "<td>" . $workblock->status . "</td>";
-                echo "</td><td>";
-                
-                $hasworkblockvote = $DB->get_record('findpartner_workblockvotes', array('studentid' => $USER->id, 'workblockid' => $workblock->id));
-                
-                // If the student has voted, can't vote again
-                if ($hasworkblockvote == null) {                
-
-                    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
-                        array('id' => $cm->id,  'workblockvote' => 1, 'workblockid' => $workblock->id)),
-                            get_string('accept', 'mod_findpartner'));
+                // Edited blocks are not shown.
+                if ($workblock->status != 'E') {
+                    echo '<tr><td>' . $workblock->task . '</td><td>';
+                    $studentsname = $DB->get_records('findpartner_incharge', ['workblockid' => $workblock->id]);
+                    foreach ($studentsname as $studentname) {
+                        $studentinfo = $DB->get_record('user', ['id' => $studentname->studentid]);
+                        echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
+    
+                    }
+                    echo "<td>" . $workblock->status;
+                    echo "</td><td>";
                     
-                    echo "</td><td>";                
+                    $hasworkblockvote = $DB->get_record('findpartner_workblockvotes', array('studentid' => $USER->id, 'workblockid' => $workblock->id));
                     
+                    // If the student has voted, can't vote again
+                    if ($hasworkblockvote == null) {                
+    
+                        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                            array('id' => $cm->id,  'workblockvote' => 1, 'workblockid' => $workblock->id)),
+                                get_string('accept', 'mod_findpartner'));
+                        
+                        echo "</td><td>";                
+                        
+    
+                        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                            array('id' => $cm->id,  'workblockvote' => 2, 'workblockid' => $workblock->id)),
+                                get_string('deny', 'mod_findpartner'));
+                    }
+    
+                    // If the workblock has been denied the admin can edit it.
+                    if ($istheadmin) {
+                        if ($workblock->status == 'D'){
+                            echo '</td><td>';
+                            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
+                            array('id' => $cm->id, 'groupid' => $group->id, 'editworkblock' => $workblock->id)),
+                                get_string('edit', 'mod_findpartner')) . "</td>";
+                        }
+    
+    
+                    }
+                    echo '</td></tr>';
+                }             
 
-                    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
-                        array('id' => $cm->id,  'workblockvote' => 2, 'workblockid' => $workblock->id)),
-                            get_string('deny', 'mod_findpartner'));
-                }
-                echo '</td></tr>';
 
             }
             echo '</table>';

@@ -76,7 +76,7 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="task" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The task that will be assigned."/>
-        <FIELD NAME="status" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="P" SEQUENCE="false" COMMENT="The members of the group will vote if they agree with the work block. 'P' for pending votation, 'A' for accepted, 'D' for denied."/>
+        <FIELD NAME="status" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="P" SEQUENCE="false" COMMENT="The members of the group will vote if they agree with the work block. 'P' for pending votation, 'A' for accepted, 'D' for denied, 'E' for edited."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -35,6 +35,9 @@ $f  = optional_param('f', 0, PARAM_INT);
 // Groupid.
 $groupid = optional_param('groupid', 0, PARAM_INT);
 
+// If it is an edition. 0 if not, else workblock id to edit.
+$editworkblock = optional_param('editworkblock', 0, PARAM_INT);
+
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
     $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -65,7 +68,8 @@ echo $OUTPUT->header();
 $data = array (
     'id' => $id,
     'select' => $select,
-    'groupid' => $groupid
+    'groupid' => $groupid,
+    'editworkblock' => $editworkblock
 );
     // Esto queremos tirarlo en el futuro.
 $findpartner = $DB->get_record( 'findpartner', array (
@@ -77,7 +81,15 @@ $mform = new workblock_form( null, array (
     $findpartner
 ) );
 
+// If the admin is editing the task is set by default.
+if ($editworkblock != 0) {
+    $query = $DB->get_record('findpartner_workblock', ['id' => $editworkblock]);
+    $toform = array('task' => $query->task);
+    $mform->set_data($toform);
+}
+
 $mform->display();
+
 
 if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is present on form.
@@ -95,6 +107,11 @@ if ($mform->is_cancelled()) {
 
     }
     
+    if ($fromform->editworkblock != 0) {
+        $record = $DB->get_record('findpartner_workblock', ['id' => $editworkblock]);
+        $record->status = 'E';
+        $DB->update_record('findpartner_workblock', $record);
+    }
 
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
