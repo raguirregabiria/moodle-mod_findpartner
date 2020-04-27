@@ -92,7 +92,7 @@ function workblockapproved($workblockid) {
     return $yes >= $no;
 }
 
-// Update projectgroup table
+// Update projectgroup table.
 function updatestatus($group) {
     global $DB;
     if (contractapproved($group->id)) {

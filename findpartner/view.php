@@ -295,7 +295,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 // TODO Put button that says what is a contract.
                 $numvotes = $DB->count_records('findpartner_votes', array('groupid' => $group->id));
                 $numstudents = nummembers($group->id);
-                
                 if ($numvotes < $numstudents) {
 
                     echo "<center>" . get_string('alertcontract', 'mod_findpartner') . "</center>";
@@ -329,13 +328,12 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     array('id' => $cm->id, 'groupid' => $group->id)),
                         get_string('create_block', 'mod_findpartner')) . "</td>";
             }
-            
             // Insert votes.
-            if ($workblockvote != 0){
-                if($workblockvote == 1) {
+            if ($workblockvote != 0) {
+                if ($workblockvote == 1) {
                     $ins = (object)array('workblockid' => $workblockid, 'studentid' => $USER->id,
                         'vote' => 'A');
-                } else if($workblockvote == 2) {
+                } else if ($workblockvote == 2) {
                     $ins = (object)array('workblockid' => $workblockid, 'studentid' => $USER->id,
                         'vote' => 'D');
                 }
@@ -353,25 +351,15 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         $DB->update_record('findpartner_workblock', $record);
                     }
                 }
-                
-            }            
-
-            echo "<style>
-            table, td {
-              border: 1px solid black;
             }
-            
-            td {
-              padding: 10px;
-            }
-            </style>";
+            echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
 
             // Show workblocks.
             echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner').'</td><td>'.
-                get_string('memberstable', 'mod_findpartner').'</td><td>' . 
+                get_string('memberstable', 'mod_findpartner').'</td><td>' .
                     get_string('workblockstatus', 'mod_findpartner').'</td></tr>';
             $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $group->id]);
-            foreach ($workblocks as $workblock) {   
+            foreach ($workblocks as $workblock) {
 
                 // Edited blocks are not shown.
                 if ($workblock->status != 'E') {
@@ -380,20 +368,17 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     foreach ($studentsname as $studentname) {
                         $studentinfo = $DB->get_record('user', ['id' => $studentname->studentid]);
                         echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
-    
                     }
                     echo "</td>";
                     echo "<td>" . $workblock->status ."</td>";
-                    
-                    $hasworkblockvote = $DB->get_record('findpartner_workblockvotes', array('studentid' => $USER->id, 'workblockid' => $workblock->id));
-                    
-                    // If the student has voted, can't vote again
-                    if ($hasworkblockvote == null) {                
+                    $hasworkblockvote = $DB->get_record('findpartner_workblockvotes',
+                        array('studentid' => $USER->id, 'workblockid' => $workblock->id));
+                    // If the student has voted, can't vote again.
+                    if ($hasworkblockvote == null) {
                         echo '<td>';
                         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                             array('id' => $cm->id,  'workblockvote' => 1, 'workblockid' => $workblock->id)),
                                 get_string('accept', 'mod_findpartner'));
-                        
                         echo "</td><td>";
 
                         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
@@ -401,28 +386,21 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                                 get_string('deny', 'mod_findpartner'));
                         echo '</td>';
                     }
-    
                     // If the workblock has been denied the admin can edit it.
                     if ($istheadmin) {
-                        if ($workblock->status == 'D'){
+                        if ($workblock->status == 'D') {
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
                             array('id' => $cm->id, 'groupid' => $group->id, 'editworkblock' => $workblock->id)),
                                 get_string('edit', 'mod_findpartner')) . "</td>";
                         }
-    
-    
                     }
                     echo '</tr>';
-                }             
-
-
+                }
             }
             echo '</table>';
 
 
         } // TODO poner el chat.
-        
-        
     }
 }
 echo $OUTPUT->footer();

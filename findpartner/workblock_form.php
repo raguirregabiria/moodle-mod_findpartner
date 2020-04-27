@@ -58,10 +58,7 @@ class workblock_form extends moodleform {
         $mform->setType('task', PARAM_NOTAGS);
 
         $mform->addRule('task', null, 'required', null, 'client');
-
-        
         $students = $DB->get_records('findpartner_student', ['studentgroup' => $data['groupid']]);
-        
         $arraystudents = [];
 
         // We need this in order to save the member id.
@@ -69,7 +66,6 @@ class workblock_form extends moodleform {
             $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
             $arraystudents[$student->studentid] = $studentinfo->firstname . ' ' . $studentinfo->lastname;
         }
-        
         // This allows the user to make multiple choice.
         $select = $mform->addElement('select', 'members', get_string('members', 'mod_findpartner'), $arraystudents, $attributes);
         $select->setMultiple(true);

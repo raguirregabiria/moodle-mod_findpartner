@@ -102,11 +102,10 @@ if ($mform->is_cancelled()) {
 
     // Insert the students in charge of that block.
     foreach ($fromform->members as $memberid) {
-        $ins = (object)array('studentid' => $memberid,'workblockid'=>$workblockid);
+        $ins = (object)array('studentid' => $memberid, 'workblockid' => $workblockid);
         $DB->insert_record('findpartner_incharge', $ins, $returnid = true. $bulk = false);
 
     }
-    
     if ($fromform->editworkblock != 0) {
         $record = $DB->get_record('findpartner_workblock', ['id' => $editworkblock]);
         $record->status = 'E';
