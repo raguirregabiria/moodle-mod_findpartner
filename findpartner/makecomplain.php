@@ -25,7 +25,7 @@
 
 require(__DIR__.'/../../config.php');
 require_once(__DIR__.'/lib.php');
-require_once('group_form_request.php');
+require_once('complain_form.php');
 
 
 
@@ -37,8 +37,7 @@ $id = optional_param('id', 0, PARAM_INT);
 $f  = optional_param('f', 0, PARAM_INT);
 
 // Groupid.
-$groupid = optional_param('groupid', 0, PARAM_INT);
-
+$workblockid = optional_param('workblockid', 0, PARAM_INT);
 
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
@@ -61,7 +60,7 @@ $modulecontext = context_module::instance($cm->id);
 global $USER;
 global $DB;
 
-$PAGE->set_url('/mod/findpartner/makerequest.php', array('id' => $cm->id, 'groupid' => $groupid));
+$PAGE->set_url('/mod/findpartner/makecomplain.php', array('id' => $cm->id, 'workblock' => $groupid));
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
@@ -72,14 +71,14 @@ echo $OUTPUT->header();
 $data = array (
     'id' => $id,
     'select' => $select,
-    'groupid' => $groupid
+    'workblockid' => $workblockid
 );
     // Esto queremos tirarlo en el futuro.
 $findpartner = $DB->get_record( 'findpartner', array (
 'id' => 1
 ), '*', MUST_EXIST );
 
-$mform = new group_form_request( null, array (
+$mform = new complain_form( null, array (
     $data,
     $findpartner
 ) );
@@ -90,16 +89,13 @@ if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is present on form.
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 } else if ($fromform = $mform->get_data()) {
-    // Check that the student has not made any other request to this group.
-    // The student can make more request if they uses the return page button.
-
-    $otherrequest = $DB->get_record('findpartner_request',
-        array('student' => $USER->id, 'groupid' => $fromform->groupid, 'status' => 'P'));
-
-    if ($otherrequest == null) {
-        $ins = (object)array('student' => $USER->id, 'groupid' => $fromform->groupid, 'message' => $fromform->request);
-        $DB->insert_record('findpartner_request', $ins, $returnid = true. $bulk = false);
+    $query = $DB->get_record('findpartner_complain', ['workblockid' => $fromform->workblockid, 'studentid' => $USER->id]);
+    if ($query == null) {
+        $ins = (object)array('studentid' => $USER->id, 'workblockid' => $fromform->workblockid, 'complain' => $fromform->complain);
+        $DB->insert_record('findpartner_complain', $ins, $returnid = true. $bulk = false);
     }
+    
+    
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 

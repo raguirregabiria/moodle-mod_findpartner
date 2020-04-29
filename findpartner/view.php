@@ -357,7 +357,9 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             // Show workblocks.
             echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner').'</td><td>'.
                 get_string('memberstable', 'mod_findpartner').'</td><td>' .
-                    get_string('workblockstatus', 'mod_findpartner').'</td></tr>';
+                    get_string('workblockstatus', 'mod_findpartner').'</td><td>' .
+                        get_string('sendcomplain', 'mod_findpartner') . '</td><td>' .
+                            get_string('complains', 'mod_findpartner') . '</td></tr>';
             $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $group->id]);
             foreach ($workblocks as $workblock) {
 
@@ -373,6 +375,35 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     echo "<td>" . $workblock->status ."</td>";
                     $hasworkblockvote = $DB->get_record('findpartner_workblockvotes',
                         array('studentid' => $USER->id, 'workblockid' => $workblock->id));
+
+
+                    // If the workblock is approved the student can complain in case they don't agree anymore.
+                    // With the person/s in charge.
+                    if ($workblock->status == 'A') {
+                        $query = $DB->get_record('findpartner_complain', ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
+                        if ($query == null) {
+                            echo '<td>' . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makecomplain.php',
+                            array('id' => $cm->id, 'workblockid' => $workblock->id)),
+                                get_string('complain', 'mod_findpartner')) . '</td>';
+                        } else {
+                            echo '<td>Already sent</td>';
+                        }
+
+                    } else {
+                        echo '<td></td>';
+                    }
+
+                    $complains = $DB->get_records('findpartner_complain', ['workblockid' => $workblock->id]);
+                    if ($complains!=null) {
+                        echo '<td>';
+                        foreach ($complains as $complain) {
+                            echo $complain->complain . '<br>';
+                        }
+                        echo '</td>';
+                    } else{
+                        echo '<td></td>';
+                    }
+
                     // If the student has voted, can't vote again.
                     if ($hasworkblockvote == null) {
                         echo '<td>';
@@ -385,13 +416,24 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                             array('id' => $cm->id,  'workblockvote' => 2, 'workblockid' => $workblock->id)),
                                 get_string('deny', 'mod_findpartner'));
                         echo '</td>';
-                    }
+                    }                   
+                    
+
+                    // TODO If the student is in charge of the workblock.
+                    
                     // If the workblock has been denied the admin can edit it.
                     if ($istheadmin) {
                         if ($workblock->status == 'D') {
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
                             array('id' => $cm->id, 'groupid' => $group->id, 'editworkblock' => $workblock->id)),
                                 get_string('edit', 'mod_findpartner')) . "</td>";
+                        } else{
+                            $complains = $DB->get_records('findpartner_complain', ['workblockid' => $workblock->id]);
+                            if ($complains != null) {
+                                echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
+                                array('id' => $cm->id, 'groupid' => $group->id, 'editworkblock' => $workblock->id)),
+                                    get_string('edit', 'mod_findpartner')) . "</td>";
+                            }
                         }
                     }
                     echo '</tr>';

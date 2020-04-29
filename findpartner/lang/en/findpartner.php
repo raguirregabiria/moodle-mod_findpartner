@@ -83,9 +83,18 @@ $string['workblock'] = 'Task';
 $string['memberstable'] = 'Members assigned to the task';
 $string['workblockstatus'] = 'Status';
 $string['edit'] = 'Edit';
+$string['complain'] = 'Complain';
+$string['complains'] = 'Complains';
+$string['sendcomplain'] = 'Send complain';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';
 $string[''] = '';
-
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 
