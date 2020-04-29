@@ -114,17 +114,6 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="findpartner_complainvotes" COMMENT="Votes for a complain">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="complainid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of the complain"/>
-        <FIELD NAME="vote" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false" COMMENT="'A' for agree, 'D' for disagree."/>
-        <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of the student"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-    </TABLE>
     <TABLE NAME="findpartner_donevotes" COMMENT="Votes to decide if a workblock is done">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>

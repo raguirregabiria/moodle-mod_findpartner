@@ -92,6 +92,14 @@ function workblockapproved($workblockid) {
     return $yes >= $no;
 }
 
+// Returns True if the block will be done, False if not.
+function workblockverified($workblockid) {
+    global $DB;
+    $yes = $DB->count_records('findpartner_donevotes', array('workblockid' => $workblockid, 'vote' => 'A'));
+    $no = $DB->count_records('findpartner_donevotes', array('workblockid' => $workblockid, 'vote' => 'D'));
+    return $yes >= $no;
+}
+
 // Update projectgroup table.
 function updatestatus($group) {
     global $DB;

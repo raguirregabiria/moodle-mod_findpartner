@@ -94,8 +94,6 @@ if ($mform->is_cancelled()) {
         $ins = (object)array('studentid' => $USER->id, 'workblockid' => $fromform->workblockid, 'complain' => $fromform->complain);
         $DB->insert_record('findpartner_complain', $ins, $returnid = true. $bulk = false);
     }
-    
-    
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 

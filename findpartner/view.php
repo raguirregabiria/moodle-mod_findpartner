@@ -51,6 +51,12 @@ $workblockvote = optional_param('workblockvote', 0, PARAM_INT);
 // Id of the workblock the user has vote.
 $workblockid = optional_param('workblockid', 0, PARAM_INT);
 
+// Id of the workblock that is set as done by an user.
+$workblockdone = optional_param('workblockdone', 0, PARAM_INT);
+
+// Value equals to 1 if the student agrees that the block is complete, 2 if not.
+$validationvote = optional_param('validationvote', 0, PARAM_INT);
+
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
     $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -339,7 +345,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 }
                 $DB->insert_record('findpartner_workblockvotes', $ins, $returnid = true. $bulk = false);
 
-                // Here we check if workblock status need to be changed.
+                // Here we check if workblock status need to be changed to accept or denied.
                 $votes = $DB->count_records('findpartner_workblockvotes', array('workblockid' => $workblockid));
                 if ($votes == nummembers($group->id)) {
                     $record = $DB->get_record('findpartner_workblock', ['id' => $workblockid]);
@@ -352,6 +358,41 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     }
                 }
             }
+            // Set a workblock as completed (the users will have to decide if everythng is ok).
+
+            if ($workblockdone != 0) {
+                $record = $DB->get_record('findpartner_workblock', ['id' => $workblockdone]);
+                $record->status = 'C';
+                $DB->update_record('findpartner_workblock', $record);
+            }
+            // Insert verification votes.
+            if ($validationvote != 0) {
+                if ($validationvote == 1) {
+                    $ins = (object)array('workblockid' => $workblockid, 'studentid' => $USER->id,
+                        'vote' => 'A');
+                } else if ($validationvote == 2) {
+                    $ins = (object)array('workblockid' => $workblockid, 'studentid' => $USER->id,
+                        'vote' => 'D');
+                }
+                $DB->insert_record('findpartner_donevotes', $ins, $returnid = true. $bulk = false);
+
+                // Here we check if workblock status need to be changed to verified (task done) or accept (not finished).
+                $votes = $DB->count_records('findpartner_donevotes', array('workblockid' => $workblockid));
+                if ($votes == nummembers($group->id)) {
+                    $record = $DB->get_record('findpartner_workblock', ['id' => $workblockid]);
+                    if (workblockverified($workblockid)) {
+                        $record->status = 'V';
+                        $DB->update_record('findpartner_workblock', $record);
+                    } else {
+                        $record->status = 'A';
+                        $DB->update_record('findpartner_workblock', $record);
+                        // Now we have to delete the votes of this workblock so next time it doesn't affect the votatation.
+                        $DB->delete_records('findpartner_donevotes', array('workblockid' => $workblockid));
+                    }
+                }
+
+            }
+
             echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
 
             // Show workblocks.
@@ -372,15 +413,29 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         echo $studentinfo->firstname . ' ' . $studentinfo->lastname .'<br>';
                     }
                     echo "</td>";
-                    echo "<td>" . $workblock->status ."</td>";
+
+                    if ($workblock->status == 'A') {
+                        echo "<td>" . get_string('accepted', 'mod_findpartner') ."</td>";
+                    } else if ($workblock->status == 'D') {
+                        echo "<td>" . get_string('dennied', 'mod_findpartner') ."</td>";
+                    } else if ($workblock->status == 'P') {
+                        echo "<td>" . get_string('pending', 'mod_findpartner') ."</td>";
+                    } else if ($workblock->status == 'V') {
+                        echo "<td>" . get_string('verified', 'mod_findpartner') ."</td>";
+                    } else if ($workblock->status == 'C') {
+                        echo "<td>" . get_string('complete', 'mod_findpartner') ."</td>";
+                    }
+
+
                     $hasworkblockvote = $DB->get_record('findpartner_workblockvotes',
                         array('studentid' => $USER->id, 'workblockid' => $workblock->id));
 
 
                     // If the workblock is approved the student can complain in case they don't agree anymore.
                     // With the person/s in charge.
-                    if ($workblock->status == 'A') {
-                        $query = $DB->get_record('findpartner_complain', ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
+                    if ($workblock->status == 'A' || $workblock->status == 'C') {
+                        $query = $DB->get_record('findpartner_complain',
+                            ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
                         if ($query == null) {
                             echo '<td>' . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makecomplain.php',
                             array('id' => $cm->id, 'workblockid' => $workblock->id)),
@@ -394,13 +449,13 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     }
 
                     $complains = $DB->get_records('findpartner_complain', ['workblockid' => $workblock->id]);
-                    if ($complains!=null) {
+                    if ($complains != null) {
                         echo '<td>';
                         foreach ($complains as $complain) {
                             echo $complain->complain . '<br>';
                         }
                         echo '</td>';
-                    } else{
+                    } else {
                         echo '<td></td>';
                     }
 
@@ -416,18 +471,14 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                             array('id' => $cm->id,  'workblockvote' => 2, 'workblockid' => $workblock->id)),
                                 get_string('deny', 'mod_findpartner'));
                         echo '</td>';
-                    }                   
-                    
-
-                    // TODO If the student is in charge of the workblock.
-                    
+                    }
                     // If the workblock has been denied the admin can edit it.
                     if ($istheadmin) {
                         if ($workblock->status == 'D') {
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
                             array('id' => $cm->id, 'groupid' => $group->id, 'editworkblock' => $workblock->id)),
                                 get_string('edit', 'mod_findpartner')) . "</td>";
-                        } else{
+                        } else {
                             $complains = $DB->get_records('findpartner_complain', ['workblockid' => $workblock->id]);
                             if ($complains != null) {
                                 echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
@@ -436,6 +487,32 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                             }
                         }
                     }
+                    // If the user is assigned to the task, can set it as done. Only if the workblock has A as status.
+                    if ($workblock->status == 'A') {
+                        $incharge = $DB->get_record('findpartner_incharge',
+                            ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
+                        if ($incharge != null) {
+                            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                                    array('id' => $cm->id, 'workblockdone' => $workblock->id)),
+                                        get_string('done', 'mod_findpartner')) . "</td>";
+                        }
+                    }
+                    if ($workblock->status == 'C') {
+                        // If the student has already vote, can't vote again.
+                        $record = $DB->get_record('findpartner_donevotes',
+                            ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
+                        if ($record == null) {
+                            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                                    array('id' => $cm->id, 'workblockid' => $workblock->id, 'validationvote' => 1)),
+                                        get_string('verify', 'mod_findpartner')) . "</td>";
+                            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                                array('id' => $cm->id, 'workblockid' => $workblock->id, 'validationvote' => 2)),
+                                    get_string('noverify', 'mod_findpartner')) . "</td>";
+
+                        }
+                    }
+
+
                     echo '</tr>';
                 }
             }
