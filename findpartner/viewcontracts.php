@@ -69,13 +69,16 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+// Style.
 echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
 
 // Show workblocks.
-echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner').'</td><td>'.
-get_string('memberstable', 'mod_findpartner').'</td><td>' .
-    get_string('workblockstatus', 'mod_findpartner').'</td><td>' .
-            get_string('complains', 'mod_findpartner') . '</td></tr>';
+echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner') .'</td><td>'.
+    get_string('memberstable', 'mod_findpartner') .'</td><td>' .
+        get_string('workblockstatus', 'mod_findpartner') . '</td><td>' .
+            get_string('complains', 'mod_findpartner') . '</td><td>'.
+                get_string('datecreation', 'mod_findpartner') . '</td><td>'.
+                    get_string('datemodified', 'mod_findpartner') . '</td></tr>';
 
 $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $groupid]);
 foreach ($workblocks as $workblock) {
@@ -104,15 +107,34 @@ foreach ($workblocks as $workblock) {
     $complains = $DB->get_records('findpartner_complain', ['workblockid' => $workblock->id]);
     if ($complains != null) {
         echo '<td>';
+        echo '<table>';
         foreach ($complains as $complain) {
-            echo $complain->complain . '<br>';
+            // Name of the student that made the complain.
+            $studentinfo = $DB->get_record('user', ['id' => $complain->studentid]);
+            echo '<tr><td>' . $studentinfo->firstname . ' ' . $studentinfo->lastname  . '</td>';
+            echo '<td>' . $complain->complain . '</td>';
+            echo '<td>' . get_string('date', 'mod_findpartner') . ': ' .
+                date("Y-m-d", $complain->datecomplain) . "<br>" .
+                    get_string('time', 'mod_findpartner') . ': ' .
+                        date("h:i", $complain->datecomplain) .'</td>';
         }
+        echo '</table>';
         echo '</td>';
     } else {
         echo '<td></td>';
     }
-
-
+    echo '<td>' . get_string('date', 'mod_findpartner') . ': ' .
+        date("Y-m-d", $workblock->datecreation) . "<br>" .
+            get_string('time', 'mod_findpartner') . ': ' .
+                date("h:i", $workblock->datecreation) .'</td>';
+    if ($workblock->datemodified == null) {
+        echo '<td>No modifications made</td>';
+    } else {
+        echo '<td>' . get_string('date', 'mod_findpartner') . ': ' .
+            date("Y-m-d", $workblock->datemodified) . "<br>" .
+                get_string('time', 'mod_findpartner') . ': ' .
+                    date("h:i", $workblock->datemodified) .'</td>';
+    }
 
 }
 echo "</table>";

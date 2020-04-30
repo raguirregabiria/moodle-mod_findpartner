@@ -89,6 +89,8 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     // Teacher view.
 
+    // TODO decide if a teacher can add enrol if the dateclosure groups.
+    // TODO Teacher can edit groups.
     echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
             array('id' => $cm->id, 'studenttoenrol' => 0)),
                     get_string('enrolstudents', 'mod_findpartner'));
@@ -97,8 +99,8 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         array('id' => $cm->id, 'studenttoenrol' => 0)),
             get_string('deenrolstudents', 'mod_findpartner'));
 
-    echo "<center>Alguna chorrada con palomas $USER->id</center>";
-    
+    // Style.
+    echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner').'</td><td>'.
             get_string('members', 'mod_findpartner').'</td></tr>';
@@ -126,10 +128,11 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewgroup.php',
             array('id' => $cm->id, 'groupid' => $newrecord->id)),
                     get_string('viewgroup', 'mod_findpartner')) . "</td>";
-
-        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewcontracts.php',
-            array('id' => $cm->id, 'groupid' => $newrecord->id)),
+        if ($newrecord->contractstatus == 'Y') {
+            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewcontracts.php',
+                array('id' => $cm->id, 'groupid' => $newrecord->id)),
                     get_string('viewcontracts', 'mod_findpartner')) . "</td>";
+        }
         echo "</tr>";
     }
 
@@ -138,14 +141,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 } else {
 
     // Student view.
-
-    echo "<center>Este es el id del usuario: $USER->id<br>Este es el id de la actividad: $moduleinstance->id</center>";
-    // If the student decided to exit this activity.
-    $time = $DB->get_record('findpartner', ['id' => $moduleinstance->id]);
-
     // If the date of closure groups has not come, the students can create and join groups.
 
     if (time() < $time->dateclosuregroups) {
+        // If the student decided to exit this activity.
         if ($exitactivity == 1) {
             $DB->delete_records('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
             denyrequests($moduleinstance->id, $USER->id);
@@ -187,7 +186,8 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             }
 
             // This prints the table with the groups.
-
+            // style.
+            echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
             echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
                 get_string('description', 'mod_findpartner').'</td><td>'.
                     get_string('members', 'mod_findpartner').'</td></tr>';
