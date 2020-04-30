@@ -126,6 +126,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewgroup.php',
             array('id' => $cm->id, 'groupid' => $newrecord->id)),
                     get_string('viewgroup', 'mod_findpartner')) . "</td>";
+
+        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewcontracts.php',
+            array('id' => $cm->id, 'groupid' => $newrecord->id)),
+                    get_string('viewcontracts', 'mod_findpartner')) . "</td>";
         echo "</tr>";
     }
 
