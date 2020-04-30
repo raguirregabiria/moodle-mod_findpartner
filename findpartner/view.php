@@ -98,8 +98,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             get_string('deenrolstudents', 'mod_findpartner'));
 
     echo "<center>Alguna chorrada con palomas $USER->id</center>";
-    $time = getdate(time());
-
+    
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner').'</td><td>'.
             get_string('members', 'mod_findpartner').'</td></tr>';
@@ -351,9 +350,11 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     $record = $DB->get_record('findpartner_workblock', ['id' => $workblockid]);
                     if (workblockapproved($workblockid)) {
                         $record->status = 'A';
+                        $record->datemodified = time();
                         $DB->update_record('findpartner_workblock', $record);
                     } else {
                         $record->status = 'D';
+                        $record->datemodified = time();
                         $DB->update_record('findpartner_workblock', $record);
                     }
                 }
@@ -363,6 +364,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             if ($workblockdone != 0) {
                 $record = $DB->get_record('findpartner_workblock', ['id' => $workblockdone]);
                 $record->status = 'C';
+                $record->datemodified = time();
                 $DB->update_record('findpartner_workblock', $record);
             }
             // Insert verification votes.
@@ -382,9 +384,11 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     $record = $DB->get_record('findpartner_workblock', ['id' => $workblockid]);
                     if (workblockverified($workblockid)) {
                         $record->status = 'V';
+                        $record->datemodified = time();
                         $DB->update_record('findpartner_workblock', $record);
                     } else {
                         $record->status = 'A';
+                        $record->datemodified = time();
                         $DB->update_record('findpartner_workblock', $record);
                         // Now we have to delete the votes of this workblock so next time it doesn't affect the votatation.
                         $DB->delete_records('findpartner_donevotes', array('workblockid' => $workblockid));

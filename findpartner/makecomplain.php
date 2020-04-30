@@ -91,7 +91,8 @@ if ($mform->is_cancelled()) {
 } else if ($fromform = $mform->get_data()) {
     $query = $DB->get_record('findpartner_complain', ['workblockid' => $fromform->workblockid, 'studentid' => $USER->id]);
     if ($query == null) {
-        $ins = (object)array('studentid' => $USER->id, 'workblockid' => $fromform->workblockid, 'complain' => $fromform->complain);
+        $ins = (object)array('studentid' => $USER->id, 'workblockid' => $fromform->workblockid,
+            'complain' => $fromform->complain, 'datecomplain' => time());
         $DB->insert_record('findpartner_complain', $ins, $returnid = true. $bulk = false);
     }
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));

@@ -97,7 +97,7 @@ if ($mform->is_cancelled()) {
 } else if ($fromform = $mform->get_data()) {
     // TODO handle cases when a student opens multiple tabsor press the return button.
     // Insert the work block.
-    $ins = (object)array('groupid' => $fromform->groupid, 'task' => $fromform->task);
+    $ins = (object)array('groupid' => $fromform->groupid, 'task' => $fromform->task, 'datecreation' => time());
     $workblockid = $DB->insert_record('findpartner_workblock', $ins, $returnid = true. $bulk = false);
 
     // Insert the students in charge of that block.
@@ -109,6 +109,7 @@ if ($mform->is_cancelled()) {
     if ($fromform->editworkblock != 0) {
         $record = $DB->get_record('findpartner_workblock', ['id' => $editworkblock]);
         $record->status = 'E';
+        $record->datemodified = time();
         $DB->update_record('findpartner_workblock', $record);
     }
 

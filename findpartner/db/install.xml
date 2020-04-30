@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/findpartner/db" VERSION="20200428" COMMENT="XMLDB file for Moodle mod_findpartner"
+<XMLDB PATH="mod/findpartner/db" VERSION="20200430" COMMENT="XMLDB file for Moodle mod_findpartner"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -77,6 +77,8 @@
         <FIELD NAME="groupid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="task" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The task that will be assigned."/>
         <FIELD NAME="status" TYPE="char" LENGTH="1" NOTNULL="true" DEFAULT="P" SEQUENCE="false" COMMENT="The members of the group will vote if they agree with the work block. 'P' for pending votation, 'A' for accepted, 'D' for denied, 'E' for edited, 'C' for complete, 'V' for validated."/>
+        <FIELD NAME="datecreation" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation date of the workblock."/>
+        <FIELD NAME="datemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Last status modification date."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -109,6 +111,7 @@
         <FIELD NAME="workblockid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of the workblock"/>
         <FIELD NAME="complain" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="studentid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id of the student that makes the complain"/>
+        <FIELD NAME="datecomplain" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Creation date of the complain."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
