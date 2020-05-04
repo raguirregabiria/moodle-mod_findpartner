@@ -69,13 +69,16 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+// Style.
+echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
+
 $students = $DB->get_records('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentgroup' => $groupid]);
 
 echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
         get_string('firstname', 'mod_findpartner').'</td><td>'.
             get_string('lastname', 'mod_findpartner').'</td><td>'.
                 get_string('email', 'mod_findpartner').'</td></tr>';
-echo "id actividad: $moduleinstance->id";
+
 foreach ($students as $student) {
     echo $student->studentid;
     $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);

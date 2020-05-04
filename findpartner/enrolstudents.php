@@ -70,6 +70,9 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+// Style.
+echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
+
 if ($studenttoenrol > 0) {
     $ins = (object)array('studentgroup' => null, 'studentid' => $studenttoenrol,
         'findpartnerid' => $moduleinstance->id);

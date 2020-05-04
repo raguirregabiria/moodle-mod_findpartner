@@ -68,6 +68,9 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+// Style.
+echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
+
 // If there is a deenrol request, then delete the student from the activity.
 if ($studenttodeenrol > 0) {
     $thereis = $DB->get_record('findpartner_student', ['studentid' => $studenttodeenrol,

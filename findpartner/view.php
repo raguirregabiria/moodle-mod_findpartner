@@ -113,7 +113,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
         // Group name.
 
-        echo "<tr><td>".$newrecord->name.": </td>";
+        echo "<tr><td>".$newrecord->name."</td>";
 
         // Group description.
 
@@ -141,7 +141,12 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 } else {
 
     // Student view.
+
+    // If the student decided to exit this activity.
+    $time = $DB->get_record('findpartner', ['id' => $moduleinstance->id]);
+
     // If the date of closure groups has not come, the students can create and join groups.
+    
 
     if (time() < $time->dateclosuregroups) {
         // If the student decided to exit this activity.
@@ -151,7 +156,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         }
 
         $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id]);
-
+        
         // If the student isn't in the activity.
         if ($record == null && $join == 0) {
             echo "<center>" . get_string('joinmessage', 'mod_findpartner') . "</center>";
@@ -185,6 +190,38 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 }
             }
 
+            $admin = $DB->get_record('findpartner_projectgroup',
+                array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
+
+            // If a student is admin of a group.
+
+            if ($admin != null) {
+
+                // If there are pending.
+                $request = $DB->get_record('findpartner_request', array('groupid' => $admin->id, 'status' => 'P'));
+                if ($request != null) {
+                    // If the group is not full.
+                    if (maxmembers($moduleinstance->id) > nummembers($admin->id)) {
+                        // Show the button of request.
+                        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
+                            array('id' => $cm->id, 'requestid' => -1)), get_string('viewrequest', 'mod_findpartner'));
+                    }
+                }
+            }
+
+            // If a student has no group, can create one.
+
+            $newrecords = $DB->get_record('findpartner_student',
+                array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+
+            if ($newrecords->studentgroup == null) {
+                echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php',
+                    array('id' => $cm->id)), get_string('creategroup', 'mod_findpartner'));
+
+                echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
+                    array('id' => $cm->id, 'exitactivity' => 1)), get_string('exitactivity', 'mod_findpartner'));
+            }
+
             // This prints the table with the groups.
             // style.
             echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
@@ -201,7 +238,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
                 // Group name.
 
-                echo "<tr><td>".$newrecord->name.": </td>";
+                echo "<tr><td>".$newrecord->name."</td>";
 
                 // Group description.
 
@@ -252,38 +289,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             }
 
             echo '</table>';
-
-            $admin = $DB->get_record('findpartner_projectgroup',
-                array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
-
-            // If a student is admin of a group.
-
-            if ($admin != null) {
-
-                // If there are pending.
-                $request = $DB->get_record('findpartner_request', array('groupid' => $admin->id, 'status' => 'P'));
-                if ($request != null) {
-                    // If the group is not full.
-                    if (maxmembers($moduleinstance->id) > nummembers($admin->id)) {
-                        // Show the button of request.
-                        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/requests.php',
-                            array('id' => $cm->id, 'requestid' => -1)), get_string('viewrequest', 'mod_findpartner'));
-                    }
-                }
-            }
-
-            // If a student has no group, can create one.
-
-            $newrecords = $DB->get_record('findpartner_student',
-                array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
-
-            if ($newrecords->studentgroup == null) {
-                echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/creategroup.php',
-                    array('id' => $cm->id)), get_string('creategroup', 'mod_findpartner'));
-
-                echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
-                    array('id' => $cm->id, 'exitactivity' => 1)), get_string('exitactivity', 'mod_findpartner'));
-            }
         }
         // The groups are close.
     } else {
