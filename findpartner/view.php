@@ -143,10 +143,12 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     // Student view.
 
     // If the student decided to exit this activity.
+
     $time = $DB->get_record('findpartner', ['id' => $moduleinstance->id]);
 
-    // If the date of closure groups has not come, the students can create and join groups.
     
+
+    // If the date of closure groups has not come, the students can create and join groups.
 
     if (time() < $time->dateclosuregroups) {
         // If the student decided to exit this activity.
@@ -163,13 +165,19 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             // A button ask the student if them want to join it.
             echo "<center>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                 array('id' => $cm->id, 'join' => 1)),
-                get_string('accept', 'mod_findpartner')) . "</center>";
+                    get_string('accept', 'mod_findpartner')) . "</center>";
         } else {
             // If the student wants to join gets in the database.
             if ($record == null && $join == 1) {
                 $ins = (object)array('studentgroup' => null, 'studentid' => $USER->id,
                     'findpartnerid' => $moduleinstance->id);
                 $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
+            }
+            
+            if ($record->contactmethod == null) {
+                // Students must have a contact method so they can community with each other.
+                redirect(new moodle_url('/mod/findpartner/addcontactmethod.php',
+                            array('id' => $cm->id)));
             }
             // If the student wants to exit a group.
             if ($exitgroup == 1) {
