@@ -197,6 +197,9 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     $DB->update_record('findpartner_student', $record);
                 }
             }
+            // Students can edit their contact info.
+            echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/addcontactmethod.php',
+                            array('id' => $cm->id)), get_string('editcontact', 'mod_findpartner'));
 
             $admin = $DB->get_record('findpartner_projectgroup',
                 array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
@@ -292,6 +295,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                                 array('id' => $cm->id, 'exitgroup' => 1)),
                                     get_string('exitgroup', 'mod_findpartner')) . "</td>";
                     }
+                    // If this is the group of the students can see members and contact info.
+                    echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewgroup.php',
+                        array('id' => $cm->id, 'groupid' => $newrecord->id)),
+                                get_string('viewmembers', 'mod_findpartner')) . "</td>";
                 }
                 echo "</tr>";
             }
@@ -300,6 +307,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         }
         // The groups are close.
     } else {
+        // Contracts view.
 
         $student = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
         $group = $DB->get_record('findpartner_projectgroup', array('id' => $student->studentgroup));
@@ -413,6 +421,14 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 }
 
             }
+
+            // Students can edit their contact info.
+            echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/addcontactmethod.php',
+                            array('id' => $cm->id)), get_string('editcontact', 'mod_findpartner'));
+            // Show button to see members and contact info.
+            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewgroup.php',
+                        array('id' => $cm->id, 'groupid' => $group->id)),
+                                get_string('viewmembers', 'mod_findpartner')) . "</td>";
 
             echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
 
