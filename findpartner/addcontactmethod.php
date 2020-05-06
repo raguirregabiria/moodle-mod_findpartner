@@ -36,6 +36,11 @@ $id = optional_param('id', 0, PARAM_INT);
 // ... module instance id.
 $f  = optional_param('f', 0, PARAM_INT);
 
+// If useemail equals 1 the contact method wil be the official email.
+$useemail  = optional_param('useemail', 0, PARAM_INT);
+
+
+
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
     $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -72,6 +77,8 @@ if ($student->contactmethod == null) {
     echo "<h3>" . get_string('mandatorycontact', 'mod_findpartner') . "</h3>";
 } else {
     echo "<h3>" . get_string('editcontact', 'mod_findpartner') . "</h3>";
+
+
 }
 
 echo "<h4>" . get_string('showcontact', 'mod_findpartner') . "</h4>";
@@ -90,7 +97,37 @@ $mform = new contact_form( null, array (
     $findpartner
 ) );
 
+// User asked to use official email.
+if ($useemail == 1) {    
+    $ins = $DB->get_record('findpartner_student',
+        array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
+
+    $ins->contactmethodtype = "official email";
+
+    $studentinfo = $DB->get_record('user', ['id' => $USER->id]);
+
+    $ins->contactmethod = $studentinfo->email;
+    
+    $DB->update_record('findpartner_student', $ins, $returnid = true. $bulk = false);
+    
+    redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
+}
+
+echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/addcontactmethod.php',
+    array('id' => $cm->id, 'useemail' => 1)),
+        get_string('useemail', 'mod_findpartner'));
+
+if ($student->contactmethod != null) {
+    // If the admin is editing the contact is set by default.
+    $query = $DB->get_record('findpartner_student', ['studentid' => $USER->id]);
+    $toform = array('contacttype' => $query->contactmethodtype, 'contactmethod' => $query->contactmethod);
+    $mform->set_data($toform);
+}
+
+
 $mform->display();
+
+
 
 if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is pressed on form.
