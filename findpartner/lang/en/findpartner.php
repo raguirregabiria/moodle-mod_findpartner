@@ -84,8 +84,8 @@ $string['memberstable'] = 'Members assigned to the task';
 $string['workblockstatus'] = 'Status';
 $string['edit'] = 'Edit';
 $string['complain'] = 'Complain';
-$string['complains'] = 'Complains';
-$string['sendcomplain'] = 'Send a complain';
+$string['complains'] = 'Complaints';
+$string['sendcomplain'] = 'Send a complaint';
 $string['accepted'] = 'Accepted';
 $string['dennied'] = 'Denied, the admin has to edit it.';
 $string['pending'] = 'Pending of approval';
@@ -115,5 +115,57 @@ $string['enddate'] = 'End date';
 $string['endactivitydate_help'] = 'After this date students will not be able to edit workblocks';
 $string['alreadysent'] = 'Already sent';
 $string['minimum'] = 'minimum';
+$string['whatcontracts'] = 'What is a contract?';
+$string['whencontracts'] = 'When are contracts aviable?';
+$string['whycontracts'] = 'Why use contracts?';
+$string['howcontracts'] = 'How do contracts work?';
+$string['whatcontractstext'] = 'It is an agreement that recognizes the duties of the members of the group. It divides the task
+    that the group must do.';
+$string['whencontractstext'] = 'Once the closure group date comes, students must decide if they want to use this functionality. 
+    Half or more of the votes must be \'yes\' to access this functionality.';
+$string['whycontractstext'] = 'The goal of this project is to provide tools to students about teamwork. Students must communicate with 
+    each other in order to achieve success. A group member who doesn\'t work is an unacceptable situation that we want to avoid.
+        Also, professors usually have a problem when they want to evaluate teamwork abilities, so they will have access to 
+            information about contracts (group members, tasks distribution, complaints...).';
+$string['howcontractstext'] = 'The admin of the group can create workblocks. A workblock is a task compound by a name, the members in 
+    charge, and a status (pending of approval, accepted, completed, and validated).
+        <br>Each workblock must be voted by all members in order to be accepted. 
+            <br>An accepted workblock can be set as completed by a member in charge.
+                <br>A completed workblock must be voted as verified by the rest of the group.
+                    <br>Any student can send a complaint whenever they want unless the workblock is already verified.
+                        <br>When a workblock has at least one complaint or if it is denied, the admin can edit it.';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
+$string[''] = '';
 $string[''] = '';
 $string[''] = '';

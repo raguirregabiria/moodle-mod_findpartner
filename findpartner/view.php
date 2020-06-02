@@ -99,10 +99,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         array('id' => $cm->id, 'studenttoenrol' => 0)),
             get_string('deenrolstudents', 'mod_findpartner'));
 
-    // Style.
+    
     $minmembers = $DB->get_record('findpartner',
         array('id' => $moduleinstance->id));
-
+    // Style.
     echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner') .'</td><td>'.
@@ -312,9 +312,17 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         // The groups are close.
     } else {
         // Contracts view.
+        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/helpcontracts.php',
+        array('id' => $cm->id)), get_string('whatcontracts', 'mod_findpartner'));
 
         $student = $DB->get_record('findpartner_student', array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
         $group = $DB->get_record('findpartner_projectgroup', array('id' => $student->studentgroup));
+        // Show button to see members and contact info.
+        echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewgroup.php',
+            array('id' => $cm->id, 'groupid' => $group->id)),
+                get_string('viewmembers', 'mod_findpartner')) . "</td>";
+
+
         // If the student has vote to make the contract.
         if ($contract == 1) {
             $ins = (object)array('groupid' => $group->id, 'studentid' => $USER->id, 'vote' => 'Y');
@@ -431,10 +439,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             // Students can edit their contact info.
             echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/addcontactmethod.php',
                             array('id' => $cm->id)), get_string('editcontact', 'mod_findpartner'));
-            // Show button to see members and contact info.
-            echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/viewgroup.php',
-                        array('id' => $cm->id, 'groupid' => $group->id)),
-                                get_string('viewmembers', 'mod_findpartner')) . "</td>";
+
 
             echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
 

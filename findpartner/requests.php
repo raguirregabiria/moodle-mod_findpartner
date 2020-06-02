@@ -71,6 +71,8 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+// Style.
+echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
 $project = $DB->get_record('findpartner_projectgroup', array('groupadmin' => $USER->id, 'findpartner' => $moduleinstance->id));
 
 // This is used to know if somebody has pressed a button of accept or deny.
@@ -126,6 +128,7 @@ if ($requestid > 0) {
 $requests = $DB->get_records('findpartner_request', array('groupid' => $project->id, 'status' => 'P'));
 // If there are more request.
 if ($requests != null) {
+
     // If the group is not full.
     if (maxmembers($moduleinstance->id) > nummembers($project->id)) {
         // Show requests.
