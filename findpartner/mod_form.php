@@ -80,6 +80,8 @@ class mod_findpartner_mod_form extends moodleform_mod {
             get_string('error_maxmembers', 'mod_findpartner'), 'compare', '>=', 'client');
         // Adding dateclosuregroups.
         $mform->addElement('date_time_selector', 'dateclosuregroups', get_string('dateclosuregroups', 'mod_findpartner'));
+        $mform->addElement('date_time_selector', 'enddate', get_string('enddate', 'mod_findpartner'));
+        $mform->addHelpButton('enddate', 'endactivitydate', 'mod_findpartner');
 
         // Add standard elements.
         $this->standard_coursemodule_elements();

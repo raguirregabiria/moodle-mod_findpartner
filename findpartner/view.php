@@ -275,7 +275,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                                 array('id' => $cm->id, 'groupid' => $newrecord->id)),
                                     get_string('send_request', 'mod_findpartner')) . "</td>";
                         } else {
-                            echo "<td><center>Already sent</center></td>";
+                            echo "<td><center>" . get_string('alreadysent', 'mod_findpartner') . "</center></td>";
                         }
                     }
                     // If this is the group of the student.
@@ -353,7 +353,9 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         } else if ($group->contractstatus == 'Y') {
             // If the student is admin they can create work blocks.
             $istheadmin = $group->groupadmin == $USER->id;
-            if ($istheadmin) {
+            // This is used to know if the activity's end date has passed.
+            $thereistime = time() < $time->enddate;
+            if ($istheadmin && $thereistime) {
                 echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
                     array('id' => $cm->id, 'groupid' => $group->id)),
                         get_string('create_block', 'mod_findpartner')) . "</td>";
@@ -435,9 +437,14 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             // Show workblocks.
             echo '<table><tr><td>'. get_string('workblock', 'mod_findpartner').'</td><td>'.
                 get_string('memberstable', 'mod_findpartner').'</td><td>' .
-                    get_string('workblockstatus', 'mod_findpartner').'</td><td>' .
-                        get_string('sendcomplain', 'mod_findpartner') . '</td><td>' .
-                            get_string('complains', 'mod_findpartner') . '</td></tr>';
+                    get_string('workblockstatus', 'mod_findpartner').'</td><td>';
+
+            if ($thereistime) {
+                echo get_string('sendcomplain', 'mod_findpartner') . '</td><td>';
+            }
+                        
+            echo get_string('complains', 'mod_findpartner') . '</td></tr>';
+
             $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $group->id]);
             foreach ($workblocks as $workblock) {
 
@@ -470,20 +477,23 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
                     // If the workblock is approved the student can complain in case they don't agree anymore.
                     // With the person/s in charge.
-                    if ($workblock->status == 'A' || $workblock->status == 'C') {
-                        $query = $DB->get_record('findpartner_complain',
-                            ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
-                        if ($query == null) {
-                            echo '<td>' . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makecomplain.php',
-                            array('id' => $cm->id, 'workblockid' => $workblock->id)),
-                                get_string('complain', 'mod_findpartner')) . '</td>';
+                    if ($thereistime){ 
+                        if (($workblock->status == 'A' || $workblock->status == 'C')) {
+                            $query = $DB->get_record('findpartner_complain',
+                                ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
+                            if ($query == null) {
+                                echo '<td>' . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makecomplain.php',
+                                array('id' => $cm->id, 'workblockid' => $workblock->id)),
+                                    get_string('complain', 'mod_findpartner')) . '</td>';
+                            } else {
+                                echo '<td>' . get_string('alreadysent', 'mod_findpartner') . '</td>';
+                            }
+    
                         } else {
-                            echo '<td>Already sent</td>';
+                            echo '<td></td>';
                         }
-
-                    } else {
-                        echo '<td></td>';
                     }
+                    
 
                     $complains = $DB->get_records('findpartner_complain', ['workblockid' => $workblock->id]);
                     if ($complains != null) {
@@ -497,7 +507,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     }
 
                     // If the student has voted, can't vote again.
-                    if ($hasworkblockvote == null) {
+                    if ($hasworkblockvote == null && $thereistime) {
                         echo '<td>';
                         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                             array('id' => $cm->id,  'workblockvote' => 1, 'workblockid' => $workblock->id)),
@@ -510,7 +520,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         echo '</td>';
                     }
                     // If the workblock has been denied the admin can edit it.
-                    if ($istheadmin) {
+                    if ($istheadmin && $thereistime) {
                         if ($workblock->status == 'D') {
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/makeworkblock.php',
                             array('id' => $cm->id, 'groupid' => $group->id, 'editworkblock' => $workblock->id)),
@@ -528,7 +538,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     if ($workblock->status == 'A') {
                         $incharge = $DB->get_record('findpartner_incharge',
                             ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
-                        if ($incharge != null) {
+                        if ($incharge != null && $thereistime) {
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                                     array('id' => $cm->id, 'workblockdone' => $workblock->id)),
                                         get_string('done', 'mod_findpartner')) . "</td>";
@@ -538,7 +548,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                         // If the student has already vote, can't vote again.
                         $record = $DB->get_record('findpartner_donevotes',
                             ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
-                        if ($record == null) {
+                        if ($record == null && $thereistime) {
                             echo "<td>" . $OUTPUT->single_button(new moodle_url('/mod/findpartner/view.php',
                                     array('id' => $cm->id, 'workblockid' => $workblock->id, 'validationvote' => 1)),
                                         get_string('verify', 'mod_findpartner')) . "</td>";
