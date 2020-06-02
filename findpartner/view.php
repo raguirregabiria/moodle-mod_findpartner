@@ -100,10 +100,14 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             get_string('deenrolstudents', 'mod_findpartner'));
 
     // Style.
+    $minmembers = $DB->get_record('findpartner',
+        array('id' => $moduleinstance->id));
+
     echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
-        get_string('description', 'mod_findpartner').'</td><td>'.
-            get_string('members', 'mod_findpartner').'</td></tr>';
+        get_string('description', 'mod_findpartner') .'</td><td>'.
+            get_string('members', 'mod_findpartner') . ' (' . get_string('minimum', 'mod_findpartner') . 
+                ' ' . $minmembers->minmembers . ')</td></tr>';
     $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
     $student = $DB->get_record('findpartner_student',
         array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));

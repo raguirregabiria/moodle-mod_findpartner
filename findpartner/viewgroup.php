@@ -76,17 +76,20 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     // Teacher view.
     $students = $DB->get_records('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentgroup' => $groupid]);
 
-    echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
-            get_string('firstname', 'mod_findpartner').'</td><td>'.
-                get_string('lastname', 'mod_findpartner').'</td><td>'.
-                    get_string('email', 'mod_findpartner').'</td></tr>';
-    
+    echo '<table><tr><td>'. get_string('firstname', 'mod_findpartner').'</td><td>'.
+        get_string('lastname', 'mod_findpartner').'</td><td>'.
+            get_string('email', 'mod_findpartner').'</td></tr>';
+
+    $groupadmin = $DB->get_record('findpartner_projectgroup', ['id' => $groupid]);
     foreach ($students as $student) {
         $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
-        echo "<tr><td>" . "$studentinfo->username" .
-            "</td><td>" . "$studentinfo->firstname" . "</td><td>" .
-                "$studentinfo->lastname" . "</td><td>" .
-                    "$studentinfo->email" . "</td></tr>";
+        echo "<tr><td>" . "$studentinfo->firstname";
+        if ($student->studentid == $groupadmin->groupadmin) {
+            echo " (admin)";
+        }
+        echo "</td><td>" . 
+            "$studentinfo->lastname" . "</td><td>" .
+                "$studentinfo->email" . "</td></tr>";
     
     }
     echo "</table>";
@@ -99,12 +102,17 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             get_string('lastname', 'mod_findpartner').'</td><td>'.
                 get_string('contacttype', 'mod_findpartner').'</td><td>'.
                     get_string('contactmethod', 'mod_findpartner').'</td></tr>';
+
+    $groupadmin = $DB->get_record('findpartner_projectgroup', ['id' => $groupid]);
     foreach ($students as $student) {
         $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
-        echo "<tr><td>" . "$studentinfo->firstname" . "</td><td>" .
-                "$studentinfo->lastname" . "</td><td>" .
-                    "$student->contactmethodtype" . "</td><td>" .
-                        "$student->contactmethod" . "</td></tr>";                    
+        echo "<tr><td>" . "$studentinfo->firstname";
+        if ($student->studentid == $groupadmin->groupadmin) {
+            echo " (admin)";
+        }
+        echo  "</td><td>" . "$studentinfo->lastname" . "</td><td>" .
+            "$student->contactmethodtype" . "</td><td>" .
+                "$student->contactmethod" . "</td></tr>";                    
     }
     echo "</table>";
 

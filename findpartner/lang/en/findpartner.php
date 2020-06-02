@@ -114,6 +114,6 @@ $string['useemail'] = 'I want to use the official email';
 $string['enddate'] = 'End date';
 $string['endactivitydate_help'] = 'After this date students will not be able to edit workblocks';
 $string['alreadysent'] = 'Already sent';
-$string[''] = '';
+$string['minimum'] = 'minimum';
 $string[''] = '';
 $string[''] = '';
