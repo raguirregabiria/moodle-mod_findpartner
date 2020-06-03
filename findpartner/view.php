@@ -98,6 +98,8 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/deenrolstudents.php',
         array('id' => $cm->id, 'studenttoenrol' => 0)),
             get_string('deenrolstudents', 'mod_findpartner'));
+    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
+        array('id' => $cm->id)),"Completar");
 
     
     $minmembers = $DB->get_record('findpartner',
@@ -240,9 +242,13 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             // This prints the table with the groups.
             // style.
             echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
+
+            $minmembers = $DB->get_record('findpartner',
+                array('id' => $moduleinstance->id));
             echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
                 get_string('description', 'mod_findpartner').'</td><td>'.
-                    get_string('members', 'mod_findpartner').'</td></tr>';
+                    get_string('members', 'mod_findpartner') . ' (' . get_string('minimum', 'mod_findpartner') . 
+                        ' ' . $minmembers->minmembers . ')</td></tr>';
 
             $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
             $student = $DB->get_record('findpartner_student',
