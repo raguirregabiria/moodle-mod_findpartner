@@ -69,47 +69,30 @@ $PAGE->set_context($modulecontext);
 echo $OUTPUT->header();
 
 if ($findpartnerid != 0) {
-    $findpartner = $DB->get_record('findpartner', ['id' => $findpartnerid]);
-    $groups = $DB->get_records('findpartner_projectgroup', ['findpartner' => $findpartnerid]);
-    $notminmembers = array();
-    $notmaxmembers = array();
-    foreach ($groups as $group) {
-        $nummembers = nummembers($group->id);
-        if ($nummembers == 1) {
-            // If the group only has one student we set it as if the student isn't in a group.
-            $student = $DB->get_record('findpartner_student', ['studentid' => $group->groupadmin, 'findpartnerid' => $findpartnerid]);
-            $student->studentgroup = null;
-            $DB->update_record('findpartner_student', $student);
-            $DB->delete_records('findpartner_projectgroup', array('id' => $group->id));
-            
-        } else if ($nummembers < $findpartner->minmembers) {
-            array_push($notminmembers, $group);
-        } else if ($nummembers < $findpartner->maxmembers) {
-            array_push($notmaxmembers, $group);
-        }
-    }
-    
+    matchgroups ($findpartnerid);
 
-    echo "Grupos que no llegan al minimo:";
-    echo '<br>';
-    foreach ($notminmembers as $group) {
-        echo $group->name;
-        echo '<br>';
-    }
-    echo "Grupos que no llegan al maximo pero cumplen el mínimo:";
-    echo '<br>';
-    foreach ($notmaxmembers as $group) {
-        echo $group->name;
-        echo '<br>';
-    }
-    $nogroups = $DB->get_records('findpartner_student', ['studentgroup' => null]);
-    echo "Alumnos sin grupo:";
-    echo '<br>';
-    foreach ($nogroups as $student) {
-        $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
-        echo $studentinfo->firstname;
-        echo '<br>';
-    }
+    // echo "Grupos que no llegan al minimo:";
+    // echo '<br>';
+    // foreach ($notminmembers as $group) {
+    //     echo $group->name;
+    //     echo '<br>';
+    // }
+    // echo "Grupos que no llegan al maximo pero cumplen el mínimo:";
+    // echo '<br>';
+    // foreach ($notmaxmembers as $group) {
+    //     echo $group->name;
+    //     echo '<br>';
+    // }
+    // $nogroups = $DB->get_records('findpartner_student', ['findpartnerid' => $findpartnerid,'studentgroup' => null]);
+    // echo "Alumnos sin grupo:";
+    // echo '<br>';
+    // foreach ($nogroups as $student) {
+    //     $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
+    //     echo $studentinfo->firstname;
+    //     echo '<br>';
+    // }
+
+    // echo "Findpartnerid: " . $findpartnerid;
 }
 
 
