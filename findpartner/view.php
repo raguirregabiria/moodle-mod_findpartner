@@ -82,6 +82,18 @@ $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
+// Execute the autogroup algorithm when groups are not closed and the date comes.
+
+$findpartner = $DB->get_record('findpartner',
+        array('id' => $moduleinstance->id));
+
+if ($findpartner->autogroupstatus == 'N') {
+    if (time() > $findpartner->dateclosuregroups) {
+        $findpartner->autogroupstatus = 'F';
+        $DB->update_record('findpartner', $findpartner); 
+        matchgroups ($moduleinstance->id);  
+    }
+}
 
 
 echo $OUTPUT->header();
@@ -98,18 +110,26 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/deenrolstudents.php',
         array('id' => $cm->id, 'studenttoenrol' => 0)),
             get_string('deenrolstudents', 'mod_findpartner'));
-    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
-        array('id' => $cm->id)),"Completar");
+
+
+    // Button to complete groups before dateclosuregroups comes.
+    // Will only be shown if the date of closure groups has not come.
+    
+    if ($findpartner->autogroupstatus != 'F') {
+        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
+            array('id' => $cm->id)),get_string('completegroups', 'mod_findpartner'));
+    }
+    
+    
 
     
-    $minmembers = $DB->get_record('findpartner',
-        array('id' => $moduleinstance->id));
+    
     // Style.
     echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner') .'</td><td>'.
             get_string('members', 'mod_findpartner') . ' (' . get_string('minimum', 'mod_findpartner') . 
-                ' ' . $minmembers->minmembers . ')</td></tr>';
+                ' ' . $findpartner->minmembers . ')</td></tr>';
     $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
     $student = $DB->get_record('findpartner_student',
         array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
@@ -148,13 +168,9 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     // Student view.
 
-    // If the student decided to exit this activity.
-
+    // If the date of closure groups has not come, the students can create and join groups.
     $time = $DB->get_record('findpartner', ['id' => $moduleinstance->id]);
 
-    
-
-    // If the date of closure groups has not come, the students can create and join groups.
 
     if (time() < $time->dateclosuregroups) {
         // If the student decided to exit this activity.

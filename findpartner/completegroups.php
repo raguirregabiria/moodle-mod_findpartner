@@ -36,8 +36,8 @@ $id = optional_param('id', 0, PARAM_INT);
 // ... module instance id.
 $f  = optional_param('f', 0, PARAM_INT);
 
-// if not 0, the id of the activity to create groups.
-$findpartnerid = optional_param('findpartnerid', 0, PARAM_INT);
+// 1 to complete and let stundents move, 2 to complete and close groups. 
+$completegroups = optional_param('completegroups', 0, PARAM_INT);
 
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
@@ -67,44 +67,28 @@ $PAGE->set_context($modulecontext);
 
 
 echo $OUTPUT->header();
-
-if ($findpartnerid != 0) {
-    matchgroups ($findpartnerid);
-
-    // echo "Grupos que no llegan al minimo:";
-    // echo '<br>';
-    // foreach ($notminmembers as $group) {
-    //     echo $group->name;
-    //     echo '<br>';
-    // }
-    // echo "Grupos que no llegan al maximo pero cumplen el mínimo:";
-    // echo '<br>';
-    // foreach ($notmaxmembers as $group) {
-    //     echo $group->name;
-    //     echo '<br>';
-    // }
-    // $nogroups = $DB->get_records('findpartner_student', ['findpartnerid' => $findpartnerid,'studentgroup' => null]);
-    // echo "Alumnos sin grupo:";
-    // echo '<br>';
-    // foreach ($nogroups as $student) {
-    //     $studentinfo = $DB->get_record('user', ['id' => $student->studentid]);
-    //     echo $studentinfo->firstname;
-    //     echo '<br>';
-    // }
-
-    // echo "Findpartnerid: " . $findpartnerid;
+if ($completegroups > 0) {
+    $findpartner = $DB->get_record('findpartner',
+        array('id' => $moduleinstance->id));
+    if ($completegroups == 2) {        
+        $findpartner->autogroupstatus = 'F';
+        $findpartner->dateclosuregroups = time();
+        $DB->update_record('findpartner', $findpartner);   
+        
+    }        
+    matchgroups ($moduleinstance->id);
+    redirect(new moodle_url('/mod/findpartner/view.php',
+                        array('id' => $cm->id)));
 }
 
 
-
-
-
-
-
-
 echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
-        array('id' => $cm->id, 'findpartnerid' => $moduleinstance->id)),"Completar definitivamente");
+        array('id' => $cm->id, 'completegroups' => 1)),
+            get_string('completegroups', 'mod_findpartner'));
+echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
+    array('id' => $cm->id, 'completegroups' => 2)),
+        get_string('autocompleteclose', 'mod_findpartner'));
 
-
+            
 
 echo $OUTPUT->footer();

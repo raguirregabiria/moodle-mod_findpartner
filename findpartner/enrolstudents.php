@@ -39,6 +39,9 @@ $f  = optional_param('f', 0, PARAM_INT);
 // Id of the student who is going to be enroled.
 $studenttoenrol  = optional_param('studenttoenrol', 0, PARAM_INT);
 
+// 1 to enrol all students, 0 to not
+$enrolall  = optional_param('enrolall', 0, PARAM_INT);
+
 if ($id) {
     $cm             = get_coursemodule_from_id('findpartner', $id, 0, false, MUST_EXIST);
     $course         = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -70,6 +73,10 @@ $PAGE->set_context($modulecontext);
 
 echo $OUTPUT->header();
 
+echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
+        array('id' => $cm->id, 'enrolall' => 1)),
+            get_string('enrolall', 'mod_findpartner'));
+
 // Style.
 echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
 
@@ -79,13 +86,28 @@ if ($studenttoenrol > 0) {
     $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
 }
 
+$context = context_course::instance($course->id);
+
+if ($enrolall == 1) {
+    $studentsid = get_enrolled_users($context, 'mod/findpartner:student');
+    foreach ($studentsid as $studentid) {
+        $query = $DB->get_record('findpartner_student', ['findpartnerid' => $moduleinstance->id, 'studentid' => $studentid->id]);
+        if ($query == null) {
+            $ins = (object)array('studentgroup' => null, 'studentid' => $studentid->id,
+                'findpartnerid' => $moduleinstance->id);
+            $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
+        }
+    }
+
+}
+
 echo '<table><tr><td>'. get_string('userid', 'mod_findpartner').'</td><td>'.
         get_string('firstname', 'mod_findpartner').'</td><td>'.
             get_string('lastname', 'mod_findpartner').'</td><td>'.
                 get_string('email', 'mod_findpartner').'</td></tr>';
 
 
-$context = context_course::instance($course->id);
+
 
 $studentsid = get_enrolled_users($context, 'mod/findpartner:student');
 
