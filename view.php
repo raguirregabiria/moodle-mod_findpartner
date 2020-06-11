@@ -90,8 +90,8 @@ $findpartner = $DB->get_record('findpartner',
 if ($findpartner->autogroupstatus == 'N') {
     if (time() > $findpartner->dateclosuregroups) {
         $findpartner->autogroupstatus = 'F';
-        $DB->update_record('findpartner', $findpartner); 
-        matchgroups ($moduleinstance->id);  
+        $DB->update_record('findpartner', $findpartner);
+        matchgroups ($moduleinstance->id);
     }
 }
 
@@ -100,35 +100,28 @@ echo $OUTPUT->header();
 if (has_capability('mod/findpartner:update', $modulecontext)) {
 
     // Teacher view.
-
-    // TODO decide if a teacher can add enrol if the dateclosure groups.
     // TODO Teacher can edit groups.
-    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
+    // Teacher can only enrol when the groups are not closed.
+    if (time() < $findpartner->dateclosuregroups) {
+        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/enrolstudents.php',
             array('id' => $cm->id, 'studenttoenrol' => 0)),
                     get_string('enrolstudents', 'mod_findpartner'));
 
-    echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/deenrolstudents.php',
-        array('id' => $cm->id, 'studenttoenrol' => 0)),
-            get_string('deenrolstudents', 'mod_findpartner'));
-
-
+        echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/deenrolstudents.php',
+            array('id' => $cm->id, 'studenttoenrol' => 0)),
+                get_string('deenrolstudents', 'mod_findpartner'));
+    }
     // Button to complete groups before dateclosuregroups comes.
     // Will only be shown if the date of closure groups has not come.
-    
     if ($findpartner->autogroupstatus != 'F') {
         echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
-            array('id' => $cm->id)),get_string('completegroups', 'mod_findpartner'));
+            array('id' => $cm->id)), get_string('completegroups', 'mod_findpartner'));
     }
-    
-    
-
-    
-    
     // Style.
     echo "<style>table,td{border: 1px solid black;}td{padding: 10px;}</style>";
     echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
         get_string('description', 'mod_findpartner') .'</td><td>'.
-            get_string('members', 'mod_findpartner') . ' (' . get_string('minimum', 'mod_findpartner') . 
+            get_string('members', 'mod_findpartner') . ' (' . get_string('minimum', 'mod_findpartner') .
                 ' ' . $findpartner->minmembers . ')</td></tr>';
     $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
     $student = $DB->get_record('findpartner_student',
@@ -169,7 +162,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
     // Student view.
 
     // If the date of closure groups has not come, the students can create and join groups.
-    $time = $DB->get_record('findpartner', ['id' => $moduleinstance->id]);
+    $time = $findpartner;
 
 
     if (time() < $time->dateclosuregroups) {
@@ -180,7 +173,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         }
 
         $record = $DB->get_record('findpartner_student', ['studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id]);
-        
         // If the student isn't in the activity.
         if ($record == null && $join == 0) {
             echo "<center>" . get_string('joinmessage', 'mod_findpartner') . "</center>";
@@ -195,7 +187,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                     'findpartnerid' => $moduleinstance->id);
                 $DB->insert_record('findpartner_student', $ins, $returnid = true. $bulk = false);
             }
-            
             if ($record->contactmethod == null) {
                 // Students must have a contact method so they can community with each other.
                 redirect(new moodle_url('/mod/findpartner/addcontactmethod.php',
@@ -263,7 +254,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                 array('id' => $moduleinstance->id));
             echo '<table><tr><td>'. get_string('group_name', 'mod_findpartner').'</td><td>'.
                 get_string('description', 'mod_findpartner').'</td><td>'.
-                    get_string('members', 'mod_findpartner') . ' (' . get_string('minimum', 'mod_findpartner') . 
+                    get_string('members', 'mod_findpartner') . ' (' . get_string('minimum', 'mod_findpartner') .
                         ' ' . $minmembers->minmembers . ')</td></tr>';
 
             $newrecords = $DB->get_records('findpartner_projectgroup', ['findpartner' => $moduleinstance->id]);
@@ -473,7 +464,6 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
             if ($thereistime) {
                 echo get_string('sendcomplain', 'mod_findpartner') . '</td><td>';
             }
-                        
             echo get_string('complains', 'mod_findpartner') . '</td></tr>';
 
             $workblocks = $DB->get_records('findpartner_workblock', ['groupid' => $group->id]);
@@ -508,7 +498,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
 
                     // If the workblock is approved the student can complain in case they don't agree anymore.
                     // With the person/s in charge.
-                    if ($thereistime){ 
+                    if ($thereistime) {
                         if (($workblock->status == 'A' || $workblock->status == 'C')) {
                             $query = $DB->get_record('findpartner_complain',
                                 ['workblockid' => $workblock->id, 'studentid' => $USER->id]);
@@ -519,13 +509,10 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
                             } else {
                                 echo '<td>' . get_string('alreadysent', 'mod_findpartner') . '</td>';
                             }
-    
                         } else {
                             echo '<td></td>';
                         }
                     }
-                    
-
                     $complains = $DB->get_records('findpartner_complain', ['workblockid' => $workblock->id]);
                     if ($complains != null) {
                         echo '<td>';

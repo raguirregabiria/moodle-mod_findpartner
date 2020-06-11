@@ -98,7 +98,7 @@ $mform = new contact_form( null, array (
 ) );
 
 // User asked to use official email.
-if ($useemail == 1) {    
+if ($useemail == 1) {
     $ins = $DB->get_record('findpartner_student',
         array('studentid' => $USER->id, 'findpartnerid' => $moduleinstance->id));
 
@@ -107,9 +107,7 @@ if ($useemail == 1) {
     $studentinfo = $DB->get_record('user', ['id' => $USER->id]);
 
     $ins->contactmethod = $studentinfo->email;
-    
     $DB->update_record('findpartner_student', $ins, $returnid = true. $bulk = false);
-    
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 
@@ -142,9 +140,7 @@ if ($mform->is_cancelled()) {
     $ins->contactmethodtype = $fromform->contacttype;
 
     $ins->contactmethod = $fromform->contactmethod;
-    
     $DB->update_record('findpartner_student', $ins, $returnid = true. $bulk = false);
-    
     redirect(new moodle_url ('/mod/findpartner/view.php', array('id' => $cm->id)));
 }
 

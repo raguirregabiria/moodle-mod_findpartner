@@ -87,10 +87,9 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         if ($student->studentid == $groupadmin->groupadmin) {
             echo " (admin)";
         }
-        echo "</td><td>" . 
+        echo "</td><td>" .
             "$studentinfo->lastname" . "</td><td>" .
                 "$studentinfo->email" . "</td></tr>";
-    
     }
     echo "</table>";
 } else {
@@ -112,7 +111,7 @@ if (has_capability('mod/findpartner:update', $modulecontext)) {
         }
         echo  "</td><td>" . "$studentinfo->lastname" . "</td><td>" .
             "$student->contactmethodtype" . "</td><td>" .
-                "$student->contactmethod" . "</td></tr>";                    
+                "$student->contactmethod" . "</td></tr>";
     }
     echo "</table>";
 

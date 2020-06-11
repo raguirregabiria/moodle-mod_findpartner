@@ -30,7 +30,6 @@ class contact_form extends moodleform {
     const CONTACT_MAXLEN = 50;
 
     const CONTACTTYPE_MAXLEN = 15;
-    
     public function definition() {
 
         $mform = $this->_form;
@@ -39,7 +38,6 @@ class contact_form extends moodleform {
         $mform->addElement('hidden', 'id');
 
         $mform->setType('id', PARAM_INT);
-        
         $mform->addElement('textarea', 'contacttype', get_string('contacttype', 'mod_findpartner'),
                 array('wrap' => 'virtual', 'maxlength' => self::CONTACTTYPE_MAXLEN - 1, 'rows' => '3', 'cols' => '102', ''));
 

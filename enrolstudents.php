@@ -39,7 +39,7 @@ $f  = optional_param('f', 0, PARAM_INT);
 // Id of the student who is going to be enroled.
 $studenttoenrol  = optional_param('studenttoenrol', 0, PARAM_INT);
 
-// 1 to enrol all students, 0 to not
+// 1 to enrol all students, 0 to not.
 $enrolall  = optional_param('enrolall', 0, PARAM_INT);
 
 if ($id) {

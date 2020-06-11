@@ -36,7 +36,7 @@ $id = optional_param('id', 0, PARAM_INT);
 // ... module instance id.
 $f  = optional_param('f', 0, PARAM_INT);
 
-// 1 to complete and let stundents move, 2 to complete and close groups. 
+// 1 to complete and let stundents move, 2 to complete and close groups.
 $completegroups = optional_param('completegroups', 0, PARAM_INT);
 
 if ($id) {
@@ -70,17 +70,17 @@ echo $OUTPUT->header();
 if ($completegroups > 0) {
     $findpartner = $DB->get_record('findpartner',
         array('id' => $moduleinstance->id));
-    if ($completegroups == 2) {        
+    if ($completegroups == 2) {
         $findpartner->autogroupstatus = 'F';
         $findpartner->dateclosuregroups = time();
-        $DB->update_record('findpartner', $findpartner);   
-        
-    }        
+        $DB->update_record('findpartner', $findpartner);
+    }
     matchgroups ($moduleinstance->id);
     redirect(new moodle_url('/mod/findpartner/view.php',
                         array('id' => $cm->id)));
 }
 
+echo '<h3>' . get_string('buttonfunction' , 'mod_findpartner') . '</h3>';
 
 echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
         array('id' => $cm->id, 'completegroups' => 1)),
@@ -88,7 +88,5 @@ echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php'
 echo $OUTPUT->single_button(new moodle_url('/mod/findpartner/completegroups.php',
     array('id' => $cm->id, 'completegroups' => 2)),
         get_string('autocompleteclose', 'mod_findpartner'));
-
-            
 
 echo $OUTPUT->footer();
