@@ -1,8 +1,28 @@
 # Find your partner #
 
-TODO Describe the plugin shortly here.
+* Students can create groups and give them a description
+* Students can ask to join groups
+* Group creator is the admin of the group and will manage the request that the group recieves
+* Given a date, the groups will autocompleted
+* A teacher can autocomplete groups
+* Students can make contracts, that are a way to divide the work in an activity
 
-TODO Provide more detailed description here.
+![Add a findpartner activity](screenshots/createFP.png)
+
+Teachers can add the activity to a course and will be asked to set a name, description, minimum of members, maximum of members, date to close groups, and date to end the activity.
+
+![See and create groups](screenshots/viewgroups.png)
+
+Students can ask to join groups or create one. Students must send a contact method so the members of the group can reach them.
+
+![Autocomplete groups](screenshots/completeGroups.png)
+
+The teacher can close groups before the date to close groups comes. If not the groups will autocomplete when the date to close groups comes.
+
+![Contracts](screenshots/contracts.png)
+
+Once the groups are closed, the students of a group will vote to make contracts. Contracts divide the work in a project and the teacher will be able to see them.
+
 
 ## License ##
 

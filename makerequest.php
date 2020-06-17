@@ -18,7 +18,9 @@
  * Prints an instance of mod_findpartner.
  *
  * @package     mod_findpartner
- * @copyright   2020 Rodrigo Aguirregabiria Herrero, Manuel Alfredo Collado Centeno, GIETA UPM
+ * @copyright   2020 Rodrigo Aguirregabiria Herrero
+ * @copyright   2020 Manuel Alfredo Collado Centeno
+ * @copyright   2020 GIETA Universidad Politécnica de Madrid (http://gieta.etsisi.upm.es/)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
