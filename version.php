@@ -27,6 +27,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_findpartner';
 $plugin->release = '0.1.0';
-$plugin->version = 2020030900;
+$plugin->version = 2020062000;
 $plugin->requires = 2018051712;
 $plugin->maturity = MATURITY_ALPHA;

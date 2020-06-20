@@ -23,16 +23,10 @@
  * @copyright   2020 GIETA Universidad Politécnica de Madrid (http://gieta.etsisi.upm.es/)
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-$tasks = array(
-    array(
-        'classname' => 'mod_findpartner\task\autogroup_task',
-        'blocking' => 0,
-        'minute' => '*/1',
-        'hour' => '*',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    )
-);
 
+function xmldb_findpartner_upgrade($oldversion) {
+    global $DB;
+    $dbman = $DB->get_manager();
+
+    return true;
+}

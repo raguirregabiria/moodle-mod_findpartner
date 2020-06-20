@@ -1,5 +1,9 @@
 # Find your partner #
 
+* Copyright (C)   2020 Rodrigo Aguirregabiria Herrero
+* Copyright (C)   2020 Manuel Alfredo Collado Centeno
+* Copyright (C)   2020 GIETA Universidad Politécnica de Madrid (http://gieta.etsisi.upm.es/)
+
 * Students can create groups and give them a description
 * Students can ask to join groups
 * Group creator is the admin of the group and will manage the request that the group recieves
